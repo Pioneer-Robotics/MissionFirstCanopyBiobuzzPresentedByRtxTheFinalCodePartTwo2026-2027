@@ -63,6 +63,7 @@ android {
             useLegacyPackaging = true
         }
     }
+    compileSdk = 34
 }
 
 dependencies {
@@ -78,6 +79,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.acmerobotics.dashboard)
     testImplementation(libs.junit)
+
+    implementation("com.pedropathing:ftc:2.1.2")
+    implementation("com.pedropathing:telemetry:1.0.0")
+    implementation("com.bylazar:fullpanels:1.0.12")
 }
 
 //kotlin {

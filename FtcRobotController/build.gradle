@@ -17,8 +17,8 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    compileSdk 34
 
-    compileSdkVersion 30
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -39,4 +39,8 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.acmerobotics.dashboard
     testImplementation libs.junit
+
+    implementation 'com.pedropathing:ftc:2.1.2'
+    implementation 'com.pedropathing:telemetry:1.0.0'
+    implementation 'com.bylazar:fullpanels:1.0.12'
 }
