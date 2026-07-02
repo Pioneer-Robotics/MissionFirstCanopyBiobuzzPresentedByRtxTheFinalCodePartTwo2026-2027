@@ -47,7 +47,7 @@ abstract class BaseOpMode : OpMode() {
 
         // Transfer data
         bot.allianceColor = Constants.TransferData.allianceColor
-        bot.pinpoint?.reset(Constants.TransferData.pose)
+//        bot.pinpoint?.reset(Constants.TransferData.pose)
     }
 
     final override fun start() {

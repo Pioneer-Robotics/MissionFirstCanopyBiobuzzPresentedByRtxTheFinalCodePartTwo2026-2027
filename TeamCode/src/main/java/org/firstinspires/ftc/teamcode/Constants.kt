@@ -95,9 +95,12 @@ object Constants {
         const val X_POD_OFFSET_MM = 67.0
 
         // encoder configuration. Y should increase left, X should increase forward
+        @JvmField
         val Y_ENCODER_DIRECTION = GoBildaPinpointDriver.EncoderDirection.REVERSED
+        @JvmField
         val X_ENCODER_DIRECTION = GoBildaPinpointDriver.EncoderDirection.FORWARD
 
+        @JvmField
         val ENCODER_RESOLUTION = GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD
     }
 
