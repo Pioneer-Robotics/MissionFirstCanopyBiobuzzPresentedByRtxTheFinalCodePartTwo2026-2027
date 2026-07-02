@@ -1,0 +1,98 @@
+package org.firstinspires.ftc.teamcode.localization.localizers
+
+import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.helpers.Pose
+import org.firstinspires.ftc.teamcode.localization.Localizer
+import kotlin.math.cos
+import kotlin.math.sin
+
+/**
+ * Three-wheel odometry localizer using two parallel and one perpendicular tracking wheel.
+ */
+class ThreeWheelOdometry(
+    private val hardwareMap: HardwareMap,
+    private val startPose: Pose = Pose(),
+    private val leftName: String = "odoLeft",
+    private val rightName: String = "odoRight",
+    private val centerName: String = "odoCenter",
+    private val ticksPerRev: Double = 2000.0,
+    private val wheelDiameterCM: Double = 4.8,
+    private val trackWidthCM: Double = 26.5,
+    private val forwardOffsetCM: Double = 15.1,
+) : Localizer {
+    override val name = "ThreeWheelOdometryLocalizer"
+
+    override lateinit var pose: Pose
+    override lateinit var prevPose: Pose
+
+    // Odometry instances
+    private lateinit var odoLeft: Odometry
+    private lateinit var odoRight: Odometry
+    private lateinit var odoCenter: Odometry
+
+    override fun init() {
+        pose = startPose
+        prevPose = startPose.copy()
+        odoLeft = Odometry(hardwareMap, leftName, ticksPerRev, wheelDiameterCM)
+        odoRight = Odometry(hardwareMap, rightName, ticksPerRev, wheelDiameterCM)
+        odoCenter = Odometry(hardwareMap, centerName, ticksPerRev, wheelDiameterCM)
+    }
+
+    // Previous encoder values
+    private var prevLeftTicks = 0
+    private var prevRightTicks = 0
+    private var prevCenterTicks = 0
+
+    override val encoderXTicks: Int
+        get() = (prevRightTicks + prevLeftTicks) / 2
+
+    override val encoderYTicks: Int
+        get() = prevCenterTicks
+
+    override fun update() {
+        // Get current encoder values
+        val dLeftCM = odoLeft.toCentimeters()
+        val dRightCM = odoRight.toCentimeters()
+        val dCenterCM = odoCenter.toCentimeters()
+
+        // Calculate robot motion
+        val dTheta = (dLeftCM - dRightCM) / trackWidthCM
+        val forwardDisplacement = (dLeftCM + dRightCM) / 2.0
+        val lateralDisplacement = dCenterCM - (forwardOffsetCM * dTheta)
+
+        // Arc motion transformation to global coordinates
+        val globalX: Double
+        val globalY: Double
+        if (dTheta != 0.0) {
+            val sinTheta = sin(dTheta)
+            val cosTheta = cos(dTheta)
+            val invTheta = 1.0 / dTheta
+            globalX = sinTheta * invTheta * forwardDisplacement + (cosTheta - 1.0) * invTheta * lateralDisplacement
+            globalY = (1.0 - cosTheta) * invTheta * forwardDisplacement + sinTheta * invTheta * lateralDisplacement
+        } else {
+            globalX = forwardDisplacement
+            globalY = lateralDisplacement
+        }
+
+        // Transform to world frame and calculate new position
+        val sinCurrentTheta = sin(pose.theta)
+        val cosCurrentTheta = cos(pose.theta)
+        val newX = pose.x + sinCurrentTheta * globalX + cosCurrentTheta * globalY
+        val newY = pose.y + cosCurrentTheta * globalX - sinCurrentTheta * globalY
+        val newTheta = pose.theta + dTheta
+
+        // Update poses
+        prevPose = pose
+        pose = Pose(newX, newY, vx = 0.0, vy = 0.0, ax = 0.0, ay = 0.0, theta = newTheta)
+    }
+
+    override fun reset(pose: Pose) {
+        this.pose = pose
+        prevPose = pose.copy()
+
+        // Reset odometry instances
+        odoLeft.reset()
+        odoRight.reset()
+        odoCenter.reset()
+    }
+}

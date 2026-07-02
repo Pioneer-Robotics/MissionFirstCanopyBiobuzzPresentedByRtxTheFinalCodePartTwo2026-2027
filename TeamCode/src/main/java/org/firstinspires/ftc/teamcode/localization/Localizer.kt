@@ -1,0 +1,33 @@
+package org.firstinspires.ftc.teamcode.localization
+
+import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
+import org.firstinspires.ftc.teamcode.helpers.Pose
+
+interface Localizer : HardwareComponent {
+    /** Current pose of the robot */
+    var pose: Pose
+
+    /** Previous pose for numerical differentiation */
+    var prevPose: Pose
+
+    val encoderXTicks: Int
+    val encoderYTicks: Int
+
+    /**
+     * Updates the pose of the robot based on sensor data
+     */
+    override fun update()
+
+    /**
+     * Resets the localizer to a specific pose
+     * @param pose The pose to reset to
+     */
+    fun reset(pose: Pose)
+
+    /**
+     * Resets the localizer to the origin (0, 0, 0)
+     */
+    fun reset() {
+        reset(Pose())
+    }
+}
