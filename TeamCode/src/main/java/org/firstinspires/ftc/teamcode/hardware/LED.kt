@@ -6,6 +6,12 @@ import org.firstinspires.ftc.teamcode.prism.Color
 import org.firstinspires.ftc.teamcode.prism.GoBildaPrismDriver
 import org.firstinspires.ftc.teamcode.prism.PrismAnimations
 
+/**
+ * Controls the GoBilda Prism LED driver for solid colors and animations.
+ *
+ * Call [init] before use. Use [setColor] for a cached solid segment update or [setAnimation]
+ * for animated patterns, and call [clear] to remove active animations and cached state.
+ */
 class LED(
     private val hardwareMap: HardwareMap,
     private val driverName: String = Constants.HardwareNames.LED_DRIVER,

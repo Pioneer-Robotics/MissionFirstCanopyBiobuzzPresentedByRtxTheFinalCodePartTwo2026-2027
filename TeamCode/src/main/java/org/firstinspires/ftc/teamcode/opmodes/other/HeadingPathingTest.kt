@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
-import org.firstinspires.ftc.teamcode.pathing.paths.LinearPath
+import org.firstinspires.ftc.teamcode.pioneerPathing.paths.LinearPath
 import kotlin.math.PI
 
 //@Disabled

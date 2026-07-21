@@ -8,6 +8,12 @@ import android.view.View
 import android.widget.Toast
 import com.qualcomm.robotcore.hardware.HardwareMap
 
+/**
+ * Utility wrapper for Driver Station phone UI interactions from an OpMode.
+ *
+ * Set [color] to update the app background, use [showToast] or [showAlert] for operator
+ * messages, and [getResources] for app resource access through the OpMode context.
+ */
 class Phone(
     private val hardwareMap: HardwareMap,
     defaultColor: Int = Color.WHITE,

@@ -33,4 +33,7 @@ class Points(
             AllianceColor.BLUE -> Pose(-this.x, this.y, theta=-this.theta)
             AllianceColor.NEUTRAL -> this
         }
+
+    // Key positions on the field
+    val ORIGIN = Pose(0.0, 0.0, 0.0)
 }

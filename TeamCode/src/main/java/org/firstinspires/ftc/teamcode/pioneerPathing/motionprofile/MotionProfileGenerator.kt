@@ -1,11 +1,8 @@
-package pioneer.pathing.motionprofile
+package org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile
 
 import org.firstinspires.ftc.teamcode.helpers.MathUtils
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.MotionProfile
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.MotionSegment
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.MotionState
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.constraints.AccelerationConstraint
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.constraints.VelocityConstraint
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.constraints.AccelerationConstraint
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.constraints.VelocityConstraint
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max

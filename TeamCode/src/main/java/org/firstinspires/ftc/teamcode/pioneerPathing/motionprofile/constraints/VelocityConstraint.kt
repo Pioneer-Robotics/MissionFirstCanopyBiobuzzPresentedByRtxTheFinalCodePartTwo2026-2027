@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pathing.motionprofile.constraints
+package org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.constraints
 
 /**
  * Motion profile velocity constraint.

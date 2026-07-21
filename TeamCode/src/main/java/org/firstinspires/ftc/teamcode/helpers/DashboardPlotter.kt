@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.helpers
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import org.firstinspires.ftc.teamcode.pathing.paths.Path
+import org.firstinspires.ftc.teamcode.pioneerPathing.paths.Path
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * A utility class for plotting data on the FTC Dashboard.
+ * Draws robot state and path visuals onto FTC Dashboard telemetry packets.
+ *
+ * Use [plotBotPosition], [plotPath], [plotPoint], [plotCircle], and [plotGrid] each loop
+ * before sending the packet. Set [scale] to adjust field rendering and call
+ * [clearPreviousPositions] to reset the tracked robot trail.
  */
 object DashboardPlotter {
     const val MAX_PREVIOUS_POSITIONS = 500

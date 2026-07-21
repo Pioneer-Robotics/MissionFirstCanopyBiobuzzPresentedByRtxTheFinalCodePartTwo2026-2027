@@ -3,6 +3,12 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 
+/**
+ * Controls two linked servos as a single mechanism position.
+ *
+ * Call [init] before use, then set [position] to move both servos together. When [reversed]
+ * is true, the second servo is driven with mirrored output for opposing linkage motion.
+ */
 class ServoPair(
     private val hardwareMap: HardwareMap,
     private val servo1Name: String,
@@ -12,7 +18,7 @@ class ServoPair(
     private lateinit var servo1: Servo
     private lateinit var servo2: Servo
 
-    // Assuming the servos have the same range and speed
+    // Assuming the servos have the same range and speed TODO
     var position: Double
         get() = servo1.position
 

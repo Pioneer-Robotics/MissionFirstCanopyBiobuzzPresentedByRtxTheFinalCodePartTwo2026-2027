@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor
 
 /**
  * Monitors battery health from all available voltage sensors.
+ * Call [init] before use.
  * Provides battery voltage information for power management and telemetry.
  */
 class BatteryMonitor(

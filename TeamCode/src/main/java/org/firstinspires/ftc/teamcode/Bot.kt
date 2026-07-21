@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
 import org.firstinspires.ftc.teamcode.hardware.LED
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
-import org.firstinspires.ftc.teamcode.pathing.follower.Follower
+import org.firstinspires.ftc.teamcode.pioneerPathing.follower.Follower
 import org.firstinspires.ftc.teamcode.vision.AprilTag
 
 enum class BotType {
@@ -17,6 +17,15 @@ enum class BotType {
     CUSTOM,
 }
 
+/**
+ * Holds the robot's hardware parts and gives easy access in OpModes.
+ *
+ * Use [fromType] for built-in setups or [builder] for a custom setup.
+ * Call [initAll] once before running, then call [updateAll] each loop.
+ * Use properties like [mecanumBase], [pinpoint], [camera], [led], and [follower]
+ * when those parts are included in this bot. Path follower updates are disabled by
+ * default and only run when [usePioneerFollower] is set to true (or [enableFollower] is called).
+ */
 class Bot private constructor(
     val type: BotType,
     private val hardwareComponents: Map<Class<out HardwareComponent>, HardwareComponent>,
@@ -42,11 +51,32 @@ class Bot private constructor(
 
     // Follower is lazily initialized (only if accessed)
     // and will error if localizer or mecanumBase is missing
-    val follower: Follower by lazy {
+    private val followerDelegate = lazy {
         Follower(
             localizer = pinpoint!!,
             drive = mecanumBase!!,
         )
+    }
+    val follower: Follower by followerDelegate
+
+    /**
+     * Bot doesn't use the old Pioneer follower by default since Pedro Pathing is preferred.
+     * To switch back to the old follower, you must call enableFollower()
+     */
+    var usePioneerFollower: Boolean = false
+        set(value) {
+            field = value
+            if (!value && followerDelegate.isInitialized()) {
+                follower.reset()
+            }
+        }
+
+    fun enableFollower() {
+        usePioneerFollower = true
+    }
+
+    fun disableFollower() {
+        usePioneerFollower = false
     }
 
     fun updateAll() {

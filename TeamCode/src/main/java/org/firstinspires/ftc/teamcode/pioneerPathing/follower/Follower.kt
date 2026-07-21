@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pathing.follower
+package org.firstinspires.ftc.teamcode.pioneerPathing.follower
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
@@ -9,12 +9,20 @@ import org.firstinspires.ftc.teamcode.helpers.MathUtils
 import org.firstinspires.ftc.teamcode.helpers.PIDController
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.localization.Localizer
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.MotionProfile
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.MotionState
-import pioneer.pathing.motionprofile.*
-import org.firstinspires.ftc.teamcode.pathing.paths.Path
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.MotionProfile
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.MotionProfileGenerator
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.MotionState
+import org.firstinspires.ftc.teamcode.pioneerPathing.paths.Path
 import kotlin.math.*
 
+/**
+ * Tracks a path using motion profiling and PID correction, then drives the robot each loop.
+ *
+ * Call [followPath] to start a new trajectory, call [update] repeatedly during your OpMode
+ * loop to send drive commands, and use [done] or [isFollowing] to monitor completion state.
+ * Call [reset] to cancel the active path and stop the drivetrain.
+ */
+@Deprecated("Deprecated in favor of Pedro Pathing")
 class Follower(
     private val localizer: Localizer,
     private val drive: MecanumBase,

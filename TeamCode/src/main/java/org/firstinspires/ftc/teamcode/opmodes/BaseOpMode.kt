@@ -12,7 +12,13 @@ import org.firstinspires.ftc.teamcode.helpers.FileLogger
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
 
-// Base OpMode class to be extended by all user-defined OpModes
+/**
+ * Shared OpMode base that wires bot lifecycle, bulk reads, follower updates, and telemetry.
+ *
+ * Subclasses should assign [bot] in [onInit], then implement [onStart], [onLoop], and [onStop]
+ * for behavior. The framework handles [bot.initAll], [bot.updateAll], optional follower updates,
+ * dashboard packet sending, and stop-time cleanup automatically.
+ */
 abstract class BaseOpMode : OpMode() {
     // Bot instance to be defined in subclasses
     protected lateinit var bot: Bot
@@ -66,7 +72,7 @@ abstract class BaseOpMode : OpMode() {
         onLoop()
 
         // Update path follower
-        if (bot.has<Pinpoint>() && bot.has<MecanumBase>()) {
+        if (bot.usePioneerFollower && bot.has<Pinpoint>() && bot.has<MecanumBase>()) {
             bot.follower.update()
         }
 

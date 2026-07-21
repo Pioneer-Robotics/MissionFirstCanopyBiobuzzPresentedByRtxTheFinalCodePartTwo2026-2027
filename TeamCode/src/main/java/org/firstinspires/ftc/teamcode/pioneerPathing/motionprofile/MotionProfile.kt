@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pathing.motionprofile
+package org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile
 
 class MotionProfile(
     val segments: List<MotionSegment>,

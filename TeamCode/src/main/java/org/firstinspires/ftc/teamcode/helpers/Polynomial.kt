@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode.helpers
 
-// Note: coeffs are least to most significant
+/**
+ * Represents a polynomial with coefficients ordered from lowest to highest degree.
+ *
+ * Use [eval] for value evaluation, [plus]/[add] for summation, transformation helpers
+ * ([vShift], [vRef], [vScale], [square]) for shaping, and calculus helpers
+ * ([derivative], [antiDerivative], [finiteInt], [nDerEval]) for derivative/integral math.
+ */
 class Polynomial(
     coeffs: Array<Double>,
 ) {

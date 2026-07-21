@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.pathing.paths
+package org.firstinspires.ftc.teamcode.pioneerPathing.paths
 
 import org.firstinspires.ftc.teamcode.helpers.Polynomial
 import org.firstinspires.ftc.teamcode.helpers.Pose
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.constraints.VelocityConstraint
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.constraints.VelocityConstraint
 import kotlin.math.pow
 
 /**

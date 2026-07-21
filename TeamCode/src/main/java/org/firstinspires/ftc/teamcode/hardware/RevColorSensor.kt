@@ -19,6 +19,13 @@ data class NormalizedHSV(
     val value: Float,
 )
 
+/**
+ * Wraps a REV color sensor to provide normalized RGBA, HSV, and distance readings.
+ *
+ * Call [init] before reading values. Tune [gain] as needed, then use [normalizedRGBA],
+ * [normalizedHSV], [distance], or convenience accessors ([r], [g], [b], [a], [hue],
+ * [saturation], [value]) during loop updates.
+ */
 class RevColorSensor(
     private val hardwareMap: HardwareMap,
     private val sensorName: String,

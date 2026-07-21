@@ -8,6 +8,13 @@ import org.firstinspires.ftc.vision.VisionProcessor
 import org.firstinspires.ftc.teamcode.Constants
 import kotlin.jvm.java
 
+/**
+ * Manages the robot webcam and optional [VisionProcessor]s through a [VisionPortal].
+ *
+ * Call [init] once before use to open the camera and attach processors, then call [close]
+ * when the OpMode ends to release resources. Use [getProcessor] to retrieve a configured
+ * processor instance by type.
+ */
 class Camera(
     private val hardwareMap: HardwareMap,
     private val cameraName: String = Constants.HardwareNames.WEBCAM,

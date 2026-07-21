@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.pathing.paths
+package org.firstinspires.ftc.teamcode.pioneerPathing.paths
 
 import org.firstinspires.ftc.teamcode.helpers.Pose
-import org.firstinspires.ftc.teamcode.pathing.motionprofile.constraints.VelocityConstraint
+import org.firstinspires.ftc.teamcode.pioneerPathing.motionprofile.constraints.VelocityConstraint
 
 /**
  * Represents a compound path made up of multiple paths.

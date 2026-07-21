@@ -6,9 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.helpers.Pose
-import org.firstinspires.ftc.teamcode.pathing.follower.RobotFeedforward
+import org.firstinspires.ftc.teamcode.pioneerPathing.follower.RobotFeedforward
 import kotlin.math.abs
 
+/**
+ * Drives a four-motor mecanum drivetrain with encoder-ready motor setup.
+ *
+ * Call [init] once before movement commands. Use [setDrivePower] for robot-centric velocity
+ * control, [setDriveVA] for feedforward-based motion commands, and [stop] to halt all motors.
+ */
 class MecanumBase(
     private val hardwareMap: HardwareMap,
     private val motorConfig: Map<String, DcMotorSimple.Direction> = Constants.Drive.MOTOR_CONFIG,
