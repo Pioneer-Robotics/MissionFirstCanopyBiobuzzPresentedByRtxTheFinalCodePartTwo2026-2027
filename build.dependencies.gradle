@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    maven { url = "https://mymaven.bylazar.com/releases" }
+    maven { url 'https://repo.dairy.foundation/releases/'}
     maven { url = 'https://maven.brott.dev/' }
 }
 
@@ -18,25 +18,8 @@ dependencies {
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'
 
-    implementation 'com.pedropathing:ftc:2.1.2'
-    implementation 'com.pedropathing:telemetry:1.0.0'
-    implementation 'com.pedropathing:ivy:1.0.0'
-
-    // If we want more options in panels, install them manually
-    // Don't use fullpanels because it doesn't launch (something is probably broken in one of the panels)
-    implementation 'com.bylazar:panels:1.0.5'
-    implementation 'com.bylazar:configurables:1.0.5'
-    implementation 'com.bylazar:field:1.0.6'
-    implementation 'com.bylazar:telemetry:1.0.5'
-    implementation 'com.bylazar:opmodecontrol:1.0.3'
-    implementation 'com.bylazar:gamepad:1.0.4'
-    implementation 'com.bylazar:battery:1.0.3'
-    implementation 'com.bylazar:camerastream:1.0.0'
-    implementation 'com.bylazar:capture:1.0.3'
-    implementation 'com.bylazar:graph:1.0.4'
-    implementation 'com.bylazar:lights:1.0.3'
-    implementation 'com.bylazar:pinger:1.0.3'
-    implementation 'com.bylazar:themes:1.0.3'
-    implementation 'com.bylazar:utils:1.0.4'
+    implementation 'com.pedropathing:revhub:3.0.0'
+    implementation 'com.pedropathing:tuning:1.0.0'
+    implementation 'com.pedropathing.ivy:pedro:1.1.1'
 }
 
