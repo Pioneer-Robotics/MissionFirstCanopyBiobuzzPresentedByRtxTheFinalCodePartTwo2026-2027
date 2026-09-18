@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.calibration
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.Bot
+import org.firstinspires.ftc.teamcode.BotType
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pioneerPathing.paths.LinearPath
 
 @Disabled
 @Autonomous(name = "Theta PID Tuner", group = "Calibration")
-class ThetaPidTuner : BaseOpMode() {
+class ThetaPidTuner : BaseOpMode(BotType.MECANUM_BOT) {
     enum class State {
         INIT,
         CLOCK,
@@ -20,15 +21,6 @@ class ThetaPidTuner : BaseOpMode() {
     }
 
     var state = State.INIT
-
-    override fun onInit() {
-        bot =
-            Bot
-                .Builder()
-                .add(MecanumBase(hardwareMap))
-                .add(Pinpoint(hardwareMap))
-                .build()
-    }
 
     override fun onLoop() {
         when (state) {

@@ -12,7 +12,7 @@ import kotlin.math.PI
 
 @Disabled
 @Autonomous(name = "Odometer Offset Calculator", group = "Calibration")
-class OdometerOffsetCalculation : BaseOpMode() {
+class OdometerOffsetCalculation : BaseOpMode(BotType.MECANUM_BOT) {
     private val numRotations = 10
     private var accumulatedTheta = 0.0
     private var prevTheta = 0.0F
@@ -20,7 +20,6 @@ class OdometerOffsetCalculation : BaseOpMode() {
     private var initialYEncoderTicks = 0
 
     override fun onInit() {
-        bot = Bot.fromType(BotType.MECANUM_BOT, hardwareMap)
         bot.initAll() // Init before using pinpoint
         bot.pinpoint!!.update() // Get initial encoder values
         initialXEncoderTicks = bot.pinpoint!!.encoderXTicks

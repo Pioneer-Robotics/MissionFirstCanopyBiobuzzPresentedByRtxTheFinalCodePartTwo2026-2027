@@ -11,7 +11,7 @@ import kotlin.math.hypot
 
 //@Disabled
 @Autonomous(name = "Static Feedforward Tuner", group = "Calibration")
-class StaticFeedforwardTuner : BaseOpMode() {
+class StaticFeedforwardTuner : BaseOpMode(BotType.MECANUM_BOT) {
     enum class State {
         FORWARD,
         DELAY,
@@ -28,8 +28,6 @@ class StaticFeedforwardTuner : BaseOpMode() {
     var state: State = State.FORWARD
 
     override fun onInit() {
-        bot = Bot.fromType(BotType.MECANUM_BOT, hardwareMap)
-
         telemetryPacket.put("Current Power", currentPower)
         telemetryPacket.put("Current Velocity", hypot(bot.pinpoint!!.pose.vx, bot.pinpoint!!.pose.vy))
     }

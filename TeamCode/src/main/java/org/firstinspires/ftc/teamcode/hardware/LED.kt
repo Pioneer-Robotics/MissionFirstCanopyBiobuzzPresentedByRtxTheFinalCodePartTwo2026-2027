@@ -70,8 +70,6 @@ class LED(
         )
     }
 
-
-
     fun setAnimation(animation: PrismAnimations.AnimationBase) {
         driver.insertAndUpdateAnimation(
             GoBildaPrismDriver.LayerHeight.LAYER_0,

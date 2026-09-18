@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.opmodes.teleop.drivers.TeleopDriver1
 import org.firstinspires.ftc.teamcode.opmodes.teleop.drivers.TeleopDriver2
 
 @TeleOp(name = "Teleop")
-class Teleop : BaseOpMode() {
+class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private lateinit var driver1: TeleopDriver1
     private lateinit var driver2: TeleopDriver2
     private val allianceToggle = Toggle(false)
@@ -26,7 +26,7 @@ class Teleop : BaseOpMode() {
         driver2 = TeleopDriver2(gamepad2, bot)
     }
 
-    override fun init_loop() {
+    override fun onInitLoop() {
         allianceToggle.toggle(gamepad1.touchpad)
         if (allianceToggle.justChanged) {
             changedAllianceColor = true

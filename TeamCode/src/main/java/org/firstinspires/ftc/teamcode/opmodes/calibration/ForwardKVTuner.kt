@@ -9,9 +9,8 @@ import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
 
 //@Disabled
 @Autonomous(name = "Forward KV Tuner", group = "Calibration")
-class ForwardKVTuner : BaseOpMode() {
+class ForwardKVTuner : BaseOpMode(BotType.COMP_BOT) {
     override fun onInit() {
-        bot = Bot.fromType(BotType.MECANUM_BOT, hardwareMap)
         FtcDashboard.getInstance().telemetry.addData("Velocity (cm/s)", 0.0)
         FtcDashboard.getInstance().telemetry.addData("Target (cm/s)", 50.0)
         FtcDashboard.getInstance().telemetry.update()

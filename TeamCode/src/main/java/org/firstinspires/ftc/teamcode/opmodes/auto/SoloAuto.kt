@@ -1,119 +1,81 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.pedropathing.api.Paths.curve
-import com.pedropathing.api.Paths.line
+import com.pedropathing.algorithm.ForesightConfig
+import com.pedropathing.api.Paths.*
 import com.pedropathing.api.PoseFactory
 import com.pedropathing.follower.Follower
+import com.pedropathing.paths.Path
 import com.pedropathing.ivy.Command
 import com.pedropathing.ivy.Scheduler
 import com.pedropathing.ivy.Scheduler.schedule
 import com.pedropathing.ivy.commands.Commands.instant
-import com.pedropathing.ivy.commands.Commands.waitMs
 import com.pedropathing.ivy.groups.Groups.sequential
 import com.pedropathing.ivy.pedro.PedroCommands.follow
-import com.pedropathing.paths.Path
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.Bot
 import org.firstinspires.ftc.teamcode.BotType
-import org.firstinspires.ftc.teamcode.general.AllianceColor
-import org.firstinspires.ftc.teamcode.helpers.Toggle
-import org.firstinspires.ftc.teamcode.helpers.next
+import org.firstinspires.ftc.teamcode.hardware.LED
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.prism.Color
 
 @Autonomous(name = "Solo Auto", group = "Autonomous")
-class SoloAuto : BaseOpMode() {
-    private val allianceToggle = Toggle(false)
+class SoloAuto : OpMode() {
 
-    // Pedro
     private lateinit var follower: Follower
-    private val p = PoseFactory.degrees() // TODO: Mirror
 
-    // Poses
-    private val startPose = p.of(-15.25,-63.5,180.0)
-    private val collectGardenPose = p.of(-62.0, -62.0, 180.0)
-    private val shootFarPose = p.of(-24.0, 52.5, 90.0)
+    private val poseFactory = PoseFactory.degrees()
 
-    // Control Poses
-    private val control1 = p.of(-24.0, 0.0, 0.0)
-    private val control2 = p.of(-62.0, 52.5, 0.0)
+    // Hardware
+    lateinit var led: LED
+
+    // Points
+    private val start = poseFactory.of(56.0, 8.0, 180.0)
+    private val collect = poseFactory.of(7.0, 8.0, 180.0)
+    private val shootFar = poseFactory.of(47.0, 117.0, 90.0)
+    private val control1 = poseFactory.of(47.0, 22.0, 0.0)
+    private val control2 = poseFactory.of(7.0, 117.0, 0.0)
 
     // Paths
-    private fun startToCollect(): Path = line(startPose, collectGardenPose).linear(startPose, collectGardenPose)
-    private fun collectGardenToShootFar(): Path = curve(collectGardenPose, control1, control2, shootFarPose).linear(collectGardenPose, shootFarPose)
+    fun startToCollect(): Path = line(start, collect).constant(collect)
+    fun collectToShootFar(): Path = curve(collect, control1, control2, shootFar).linear(collect, shootFar)
 
-    // Commands
-    private fun shoot(): Command = instant { } // TODO: Replace with actions
+    // Autonomous routine
+    fun autoRoutine(): Command = sequential(
+        instant { Constants.foresightConfig.maxVelocityConstraint.set(25.0) },
+        follow(follower, startToCollect()),
+        instant { Constants.foresightConfig.maxVelocityConstraint.set(ForesightConfig.Constraint.NONE) },
+        follow(follower, collectToShootFar()),
+    )
 
-    private fun autoRoutine() : Command {
-        return sequential(
-            // Shoot
-            waitMs(1000.0),
-            // Enable intake
-            follow(follower, startToCollect()),
-            follow(follower, collectGardenToShootFar())
-        )
-    }
-
-    override fun onInit() {
-        bot = Bot.fromType(BotType.COMP_BOT, hardwareMap)
-
+    override fun init() {
+        Scheduler.reset()
         follower = Constants.create(hardwareMap)
-
-        telemetry.addData("BEFORE", follower.pose().x())
-
-        follower.setPose(startPose)
-
-        telemetry.addData("AFTER SET", follower.pose().x())
-
+        follower.setPose(start)
         follower.update()
 
-        telemetry.addData("AFTER UPDATE", follower.pose().x())
-        telemetry.update()
-
-        FtcDashboard.getInstance().telemetry.addData("Pose X", follower.pose().x())
-        FtcDashboard.getInstance().telemetry.addData("Pose Y", follower.pose().y())
-        FtcDashboard.getInstance().telemetry.addData("Pose Heading", follower.pose().heading())
-        FtcDashboard.getInstance().telemetry.update()
+        // Create hardware objects
+        led = LED(hardwareMap).apply { init() }
     }
 
-    override fun init_loop() {
-        toggleAlliance(gamepad1.touchpad)
-    }
-    override fun onStart() {
+    override fun start() {
         schedule(autoRoutine())
     }
 
-    override fun onLoop() {
+    override fun loop() {
         follower.update()
         Scheduler.execute()
 
-        telemetry.addData("Pose", follower.pose())
-        telemetry.update()
+        telemetry.addData("x", follower.pose().x())
+        telemetry.addData("y", follower.pose().y())
+        telemetry.addData("heading", follower.pose().heading())
 
-        FtcDashboard.getInstance().telemetry.addData("Pose X", follower.pose().x())
-        FtcDashboard.getInstance().telemetry.addData("Pose Y", follower.pose().y())
-        FtcDashboard.getInstance().telemetry.addData("Pose Heading", follower.pose().heading())
-        FtcDashboard.getInstance().telemetry.update()
-    }
-
-    private fun toggleAlliance(toggle: Boolean) {
-        allianceToggle.toggle(toggle)
-        if (allianceToggle.justChanged) {
-            bot.allianceColor = bot.allianceColor.next()
-            bot.led?.setColor(
-                when(bot.allianceColor) {
-                    AllianceColor.RED -> Color.RED
-                    AllianceColor.BLUE -> Color.BLUE
-                    AllianceColor.NEUTRAL -> Color.PURPLE
-                },
-                0,
-                23,
-            )
+        if (follower.currentPath() != null) {
+            telemetry.addData("Current path distance remaining", follower.distanceToEndpoint())
+            telemetry.addData("Path number", follower.pathIndex())
         }
-        telemetry.addData("Alliance Color", bot.allianceColor)
+
         telemetry.update()
     }
 }

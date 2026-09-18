@@ -6,11 +6,16 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Bot
+import org.firstinspires.ftc.teamcode.BotType
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.helpers.FileLogger
 import org.firstinspires.ftc.teamcode.helpers.Pose
+import org.firstinspires.ftc.teamcode.helpers.Toggle
+import org.firstinspires.ftc.teamcode.helpers.next
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
+import org.firstinspires.ftc.teamcode.prism.Color
 
 /**
  * Shared OpMode base that wires bot lifecycle, bulk reads, follower updates, and telemetry.
@@ -19,7 +24,7 @@ import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
  * for behavior. The framework handles [bot.initAll], [bot.updateAll], optional follower updates,
  * dashboard packet sending, and stop-time cleanup automatically.
  */
-abstract class BaseOpMode : OpMode() {
+abstract class BaseOpMode(val botType: BotType) : OpMode() {
     // Bot instance to be defined in subclasses
     protected lateinit var bot: Bot
 
@@ -31,10 +36,10 @@ abstract class BaseOpMode : OpMode() {
         FtcDashboard
             .getInstance()
 
-    val run_timer = ElapsedTime()
+    val runTimer = ElapsedTime()
 
     val elapsedTime: Double
-        get() = run_timer.seconds()
+        get() = runTimer.seconds()
 
     val allHubs: List<LynxModule> by lazy {
         hardwareMap.getAll(LynxModule::class.java)
@@ -44,11 +49,9 @@ abstract class BaseOpMode : OpMode() {
         for (hub in allHubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
-        onInit() // Call user-defined init method
+        bot = Bot.fromType(botType, hardwareMap)
         bot.initAll() // Initialize bot hardware
-        if (!::bot.isInitialized) {
-            throw IllegalStateException("Bot not initialized. Please set 'bot' in onInit().")
-        }
+        onInit() // Call user-defined init method
         updateTelemetry()
 
         // Transfer data
@@ -56,9 +59,13 @@ abstract class BaseOpMode : OpMode() {
 //        bot.pinpoint?.reset(Constants.TransferData.pose)
     }
 
+    final override fun init_loop() {
+        onInitLoop()
+    }
+
     final override fun start() {
         onStart()
-        run_timer.reset()
+        runTimer.reset()
     }
 
     final override fun loop() {
@@ -111,6 +118,8 @@ abstract class BaseOpMode : OpMode() {
 
     // These functions are meant to be overridden in subclasses
     protected open fun onInit() {}
+
+    protected open fun onInitLoop() {}
 
     protected open fun onStart() {}
 

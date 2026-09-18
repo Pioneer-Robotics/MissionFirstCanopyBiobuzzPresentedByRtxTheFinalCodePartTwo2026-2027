@@ -9,14 +9,10 @@ import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
 
 @TeleOp(name = "Basic Teleop")
-class BasicTeleop : BaseOpMode() {
+class BasicTeleop : BaseOpMode(BotType.MECANUM_BOT) {
     private var drivePower = Constants.Drive.DEFAULT_POWER
     private var incDrivePower: Toggle = Toggle(false)
     private var decDrivePower: Toggle = Toggle(false)
-
-    override fun onInit() {
-        bot = Bot.fromType(BotType.MECANUM_BOT, hardwareMap)
-    }
 
     override fun onLoop() {
         drive()

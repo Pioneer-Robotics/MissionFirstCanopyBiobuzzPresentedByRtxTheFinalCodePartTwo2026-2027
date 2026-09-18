@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.other
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.Bot
+import org.firstinspires.ftc.teamcode.BotType
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
@@ -11,7 +12,7 @@ import kotlin.math.PI
 
 //@Disabled
 @Autonomous(name = "Heading Pathing Test", group = "Testing")
-class HeadingPathingTest : BaseOpMode() {
+class HeadingPathingTest : BaseOpMode(BotType.MECANUM_BOT) {
     enum class State {
         INIT,
         FORWARD,
@@ -20,15 +21,6 @@ class HeadingPathingTest : BaseOpMode() {
     }
 
     var state = State.INIT
-
-    override fun onInit() {
-        bot =
-            Bot
-                .Builder()
-                .add(MecanumBase(hardwareMap))
-                .add(Pinpoint(hardwareMap))
-                .build()
-    }
 
     override fun onStart() {
         bot.pinpoint!!.reset(Pose(50.0, 0.0, theta=PI/2))

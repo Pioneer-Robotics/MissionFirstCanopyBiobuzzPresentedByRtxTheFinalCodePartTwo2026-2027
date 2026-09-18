@@ -39,12 +39,12 @@ public class Constants {
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+        c.offsetUnits.set(DistanceUnit.INCH);
         c.xPodOffset.set(2.6607582512802965);
         c.yPodOffset.set(-6.694781686377338);
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
         c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
         c.globalDistanceUnit.set(DistanceUnit.INCH);
-        c.offsetUnits.set(DistanceUnit.INCH);
     });
 
     public static ForesightConfig foresightConfig = new ForesightConfig(
@@ -70,6 +70,14 @@ public class Constants {
                 c.maxAchievableStrafeVelocity.set(59.779192181031554);
                 c.naturalForwardDeceleration.set(28.024111218176945);
                 c.naturalStrafeDeceleration.set(85.95532065334345);
+
+                // Path constraints
+//                c.brakeAggression.set(1.0);
+//                c.maxBrakingPower.set(0.2);
+//                c.maxAccelerationConstraint.set(47.5);
+//                c.maxVelocityConstraint.set(59.0);
+//                c.maxDecelerationConstraint.set(47.5);
+//                c.coastDownToVelocity.set(0.0);
             }
     );
 }

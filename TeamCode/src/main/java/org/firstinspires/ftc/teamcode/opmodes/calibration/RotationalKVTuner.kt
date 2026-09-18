@@ -10,9 +10,8 @@ import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
 
 @Disabled
 @Autonomous(name = "Rotational KV Tuner", group = "Calibration")
-class RotationalKVTuner : BaseOpMode() {
+class RotationalKVTuner : BaseOpMode(BotType.MECANUM_BOT) {
     override fun onInit() {
-        bot = Bot.fromType(BotType.MECANUM_BOT, hardwareMap)
         FtcDashboard.getInstance().telemetry.addData("Velocity (cm/s)", 0.0)
         FtcDashboard.getInstance().telemetry.addData("Target (cm/s)", 1.0)
         FtcDashboard.getInstance().telemetry.update()
