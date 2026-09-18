@@ -15,6 +15,8 @@ class DualFlywheel(
     private lateinit var leader: DcMotorEx
     private lateinit var follower: DcMotorEx
 
+    var k = 1.0
+
     override fun init() {
         leader = hardwareMap.get(DcMotorEx::class.java, motor1Name)
         follower = hardwareMap.get(DcMotorEx::class.java, motor2Name)
@@ -39,7 +41,7 @@ class DualFlywheel(
     }
 
     override fun update() {
-        follower.power = leader.power
+        follower.power = leader.power * k
     }
 
     fun getVelocity(): Double = leader.velocity
