@@ -13,12 +13,8 @@ import com.pedropathing.ivy.groups.Groups.sequential
 import com.pedropathing.ivy.pedro.PedroCommands.follow
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import org.firstinspires.ftc.teamcode.Bot
-import org.firstinspires.ftc.teamcode.BotType
 import org.firstinspires.ftc.teamcode.hardware.LED
-import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
-import org.firstinspires.ftc.teamcode.prism.Color
 
 @Autonomous(name = "Solo Auto", group = "Autonomous")
 class SoloAuto : OpMode() {
