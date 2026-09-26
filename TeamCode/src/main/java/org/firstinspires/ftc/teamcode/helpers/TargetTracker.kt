@@ -30,12 +30,11 @@ class TargetTracker(processNoiseStd: Double, measurementNoiseStd: Double) {
     /** Call only when the vision pipeline produces a valid detection.
      *  robotPoseAtCapture should be the robot's field pose AT THE FRAME'S CAPTURE
      *  TIME, not necessarily the current pose due to latency. */
-    fun onDetection(distance: Double, bearing: Double, robotPoseAtCapture: Pose) {
+    fun onDetection(cameraEstimatedPose: Pose, robotPoseAtCapture: Pose) {
         update()
 
-        val globalAngle = robotPoseAtCapture.theta + bearing
-        val fieldX = robotPoseAtCapture.x + distance * cos(globalAngle)
-        val fieldY = robotPoseAtCapture.y + distance * sin(globalAngle)
+        val fieldX = robotPoseAtCapture.x + cameraEstimatedPose.x
+        val fieldY = robotPoseAtCapture.y + cameraEstimatedPose.y
 
         filterX.update(fieldX)
         filterY.update(fieldY)
