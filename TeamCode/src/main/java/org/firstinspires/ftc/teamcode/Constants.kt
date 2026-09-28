@@ -177,21 +177,31 @@ object Constants {
 
         // Projection calibration points
         val IMAGE_POINTS = listOf(
-            Point( 33.7, 178.8),   // 10 in ahead, 6 in left
-            Point(286.3, 178.8),   // 10 in ahead, 6 in right
-            Point( 83.8,  92.0),   // 20 in ahead, 6 in left
-            Point(236.2,  92.0),   // 20 in ahead, 6 in right
-            Point(105.5,  54.5),   // 30 in ahead, 6 in left
-            Point(214.5,  54.5)    // 30 in ahead, 6 in right
+            Point(98.0, 330.0),
+            Point(571.0, 333.0),
+            Point(331.0, 280.0),
+            Point(178.0, 249.0),
+            Point(496.0, 250.0),
+            Point(334.0, 225.0),
+            Point(57.0, 225.0),
+            Point(596.0, 227.0),
+            Point(218.0, 209.0),
+            Point(456.0, 209.0),
+            Point(329.0, 195.0),
         )
 
         val GROUND_POINTS = listOf(
-            Point(10.0,  6.0),
-            Point(10.0, -6.0),
-            Point(20.0,  6.0),
-            Point(20.0, -6.0),
-            Point(30.0,  6.0),
-            Point(30.0, -6.0)
+            Point(-12.0,  47.0),
+            Point(12.0, 47.0),
+            Point(0.0,  59.0),
+            Point(-12.0, 71.0),
+            Point(12.0,  71.0),
+            Point(0.0, 83.0),
+            Point(-24.0, 83.0),
+            Point(24.0, 83.0),
+            Point(-12.0, 95.0),
+            Point(12.0, 95.0),
+            Point(0.0, 107.0),
         )
 
         // val distortionCoefficients = floatArrayOf(0.0573F, 2.0205F, -0.0331F, 0.0021F, -14.6155F, 0F, 0F, 0F)
