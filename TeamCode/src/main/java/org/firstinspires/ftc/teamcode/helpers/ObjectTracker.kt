@@ -7,12 +7,19 @@ import kotlin.math.sin
 /**
  * Uses a Kalman filter to track object positions on the field.
  */
-class ObjectTracker(processNoiseStd: Double, measurementNoiseStd: Double) {
+class ObjectTracker(
+    processNoiseStd: Double,
+    measurementNoiseStd: Double,
+    private val historyNs: Long = 1_000_000_000L // How long to keep track of Kalman filter history
+) {
     private val filterX = KalmanFilter1D(processNoiseStd = processNoiseStd, measurementNoiseStd = measurementNoiseStd)
     private val filterY = KalmanFilter1D(processNoiseStd = processNoiseStd, measurementNoiseStd = measurementNoiseStd)
 
-    private var lastUpdateTimeMs: Long = 0  // time of the last actual detection
-    private var lastPredictTimeMs: Long = 0 // time of the last prediction step
+    private class Snapshot(val timeNs: Long, val x: KalmanFilter1D.State, val y: KalmanFilter1D.State)
+    private val history = ArrayDeque<Snapshot>()
+
+    private var filterTimeNs = 0L // the moment the filter state currently represents
+    private var lastUpdateTimeNs = 0L // capture time of the last real detection
     private var hasEverSeenTarget = false
 
     private val measurementVar = measurementNoiseStd * measurementNoiseStd
@@ -24,6 +31,20 @@ class ObjectTracker(processNoiseStd: Double, measurementNoiseStd: Double) {
             robot.x + cam.x * c - cam.y * s,
             robot.y + cam.x * s + cam.y * c
         )
+    }
+
+    private fun record(t: Long) {
+        history.addLast(Snapshot(t, filterX.getState(), filterY.getState()))
+        while (history.isNotEmpty() && t - history.first().timeNs > historyNs) history.removeFirst()
+    }
+
+    private fun predictTo(tNs: Long) {
+        val dt = (tNs - filterTimeNs) / 1_000_000_000.0
+        if (dt <= 0.0) return
+        filterX.predict(dt)
+        filterY.predict(dt)
+        filterTimeNs = tNs
+        record(tNs)
     }
 
     /**
@@ -68,28 +89,50 @@ class ObjectTracker(processNoiseStd: Double, measurementNoiseStd: Double) {
      * Call once per loop iteration
      */
     fun update() {
-        if (!hasEverSeenTarget) return
-        val nowMs = System.currentTimeMillis()
-        val dtSeconds = (nowMs - lastPredictTimeMs) / 1000.0
-        if (dtSeconds <= 0.0) return
-        filterX.predict(dtSeconds)
-        filterY.predict(dtSeconds)
-        lastPredictTimeMs = nowMs
+        if (hasEverSeenTarget) predictTo(System.nanoTime())
     }
 
-    /** Call only when the vision pipeline produces a valid detection. */
-    fun onDetection(cameraEstimatedPose: Pose, robotPose: Pose) {
-        update()
+    /** Call only when the vision pipeline produces a valid detection.
+     *  robotPoseAtCapture should be the robot's field pose AT THE FRAME'S CAPTURE
+     *  TIME, not necessarily the current pose due to latency. */
+    fun onDetection(cameraEstimatedPose: Pose, robotPoseAtCapture: Pose, captureTimeNs: Long) {
+        val nowNs = System.nanoTime()
+        val capNs = minOf(captureTimeNs, nowNs)
 
-        val (fieldX, fieldY) = toField(cameraEstimatedPose, robotPose)
+        // Convert robot-centric coordinates to field coordinates
+        val (fieldX, fieldY) = toField(cameraEstimatedPose, robotPoseAtCapture)
 
-        filterX.update(fieldX)
-        filterY.update(fieldY)
+        // Get the last snapshot before the capture time
+        val snap = history.lastOrNull { it.timeNs <= capNs }
 
-        val nowMs = System.currentTimeMillis()
-        lastUpdateTimeMs = nowMs
-        lastPredictTimeMs = nowMs
-        hasEverSeenTarget = true
+        if (!hasEverSeenTarget || snap == null) {
+            // First detection, or frame older than history: apply at capture time, then catch up.
+            filterX.initialize(fieldX)
+            filterY.initialize(fieldY)
+            filterTimeNs = capNs
+            record(capNs)
+            hasEverSeenTarget = true
+        } else {
+            // Times of the predict steps being removed
+            val replayTimes = history.filter { it.timeNs > capNs }.map { it.timeNs }
+            history.removeAll { it.timeNs > capNs }
+
+            // Roll back, predict to the capture instant, apply the measurement there
+            filterX.setState(snap.x)
+            filterY.setState(snap.y)
+            filterTimeNs = snap.timeNs
+            predictTo(capNs)
+            filterX.update(fieldX)
+            filterY.update(fieldY)
+            history.removeLast() // drop the pre-update snapshot at capNs
+            record(capNs) // keep the post-update one
+
+            // Replay forward
+            for (t in replayTimes) predictTo(t)
+        }
+
+        predictTo(nowNs)
+        lastUpdateTimeNs = capNs
     }
 
     fun getX(): Double = filterX.position
@@ -103,12 +146,13 @@ class ObjectTracker(processNoiseStd: Double, measurementNoiseStd: Double) {
     fun getPositionVarianceX(): Double = filterX.positionVariance
     fun getPositionVarianceY(): Double = filterY.positionVariance
 
-    fun msSinceLastUpdate(): Long = if (hasEverSeenTarget) System.currentTimeMillis() - lastUpdateTimeMs else Long.MAX_VALUE
+    fun msSinceLastUpdate(): Long = if (hasEverSeenTarget) (System.nanoTime() - lastUpdateTimeNs) / 1_000_000 else Long.MAX_VALUE
     fun hasTarget(): Boolean = hasEverSeenTarget
 
     fun reset() {
         hasEverSeenTarget = false
-        lastUpdateTimeMs = 0
-        lastPredictTimeMs = 0
+        lastUpdateTimeNs = 0
+        filterTimeNs = 0
+        history.clear()
     }
 }

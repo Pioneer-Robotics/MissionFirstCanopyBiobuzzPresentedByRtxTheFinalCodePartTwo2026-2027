@@ -19,7 +19,7 @@ class Camera(
     private val hardwareMap: HardwareMap,
     private val cameraName: String = Constants.HardwareNames.WEBCAM,
     val processors: Array<VisionProcessor> = emptyArray(),
-    val resolution: Size = Size(640, 480)
+    val resolution: Size = Size(1280, 720)
 ) : HardwareComponent {
     private lateinit var portal: VisionPortal
 
