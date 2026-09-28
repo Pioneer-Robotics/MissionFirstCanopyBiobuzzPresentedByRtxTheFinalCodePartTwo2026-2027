@@ -14,8 +14,8 @@ class ColorBlob(
     targetColor: ColorRange? = null, // null = detects ALL blobs
     draw: Boolean = false,
 ) : Processor {
-    override val processor: ColorBlobLocatorProcessor =
-        ColorBlobLocatorProcessor
+    override val processor: TimedColorBlobProcessor = TimedColorBlobProcessor(
+            ColorBlobLocatorProcessor
             .Builder()
             .apply { targetColor?.let { setTargetColorRange(it) } } // Only set if provided
             .setContourMode(ContourMode.EXTERNAL_ONLY)
@@ -28,11 +28,12 @@ class ColorBlob(
             .setBoxFitColor(0) // Disable the drawing of rectangles
             .setCircleFitColor(Color.rgb(255, 255, 0)) // Draw a circle
             .build()
+    )
 
     /**
      * Get all detected blobs.
      */
-    fun getBlobs(): List<Blob> = processor.getBlobs()
+    fun getBlobs(): List<Blob> = processor.locator.blobs
 
     /**
      * Get blobs filtered by specific criteria.

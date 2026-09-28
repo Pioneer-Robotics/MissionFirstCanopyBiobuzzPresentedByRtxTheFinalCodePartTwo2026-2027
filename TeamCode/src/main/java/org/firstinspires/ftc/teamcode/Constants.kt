@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode.Verbose
+import org.opencv.core.Point
 import kotlin.math.PI
 
 object Constants {
@@ -168,11 +169,30 @@ object Constants {
         val RPY_UNITS = AngleUnit.DEGREES
         val RPY_OFFSET: List<Double> = listOf(0.0, -90.0, 0.0) // Pitch=-90 to face forward
 
-         //Lens Intrinsics
+         // Lens Intrinsics
          const val FX = 915.97454765
          const val FY = 915.69375972
          const val CX = 634.56292469
          const val CY = 370.77742622
+
+        // Projection calibration points
+        val IMAGE_POINTS = listOf(
+            Point( 33.7, 178.8),   // 10 in ahead, 6 in left
+            Point(286.3, 178.8),   // 10 in ahead, 6 in right
+            Point( 83.8,  92.0),   // 20 in ahead, 6 in left
+            Point(236.2,  92.0),   // 20 in ahead, 6 in right
+            Point(105.5,  54.5),   // 30 in ahead, 6 in left
+            Point(214.5,  54.5)    // 30 in ahead, 6 in right
+        )
+
+        val GROUND_POINTS = listOf(
+            Point(10.0,  6.0),
+            Point(10.0, -6.0),
+            Point(20.0,  6.0),
+            Point(20.0, -6.0),
+            Point(30.0,  6.0),
+            Point(30.0, -6.0)
+        )
 
         // val distortionCoefficients = floatArrayOf(0.0573F, 2.0205F, -0.0331F, 0.0021F, -14.6155F, 0F, 0F, 0F)
     }

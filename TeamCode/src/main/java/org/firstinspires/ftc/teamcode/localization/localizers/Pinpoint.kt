@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.localization.Localizer
  */
 class Pinpoint(
     private val hardwareMap: HardwareMap,
-    private val pinpointName: String = "pinpoint",
+    private val pinpointName: String = Constants.HardwareNames.PINPOINT,
     private val startPose: Pose = Pose(),
 ) : Localizer {
     override val name = "PinpointLocalizer"

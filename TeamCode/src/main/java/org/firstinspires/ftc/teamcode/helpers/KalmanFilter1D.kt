@@ -17,6 +17,19 @@ class KalmanFilter1D(
     private val processNoiseStd: Double = 0.1,   // std dev of random acceleration
     private val measurementNoiseStd: Double = 1.0 // std dev of position measurement noise
 ) {
+    /** Immutable copy of the filter's state, used for rollback. */
+    class State(val x: DoubleArray, val p: Array<DoubleArray>)
+
+    fun getState(): State = State(
+        x.copyOf(),
+        arrayOf(p[0].copyOf(), p[1].copyOf())
+    )
+
+    fun setState(s: State) {
+        x = s.x.copyOf()
+        p = arrayOf(s.p[0].copyOf(), s.p[1].copyOf())
+    }
+
     // State vector: [position, velocity]
     var x: DoubleArray = doubleArrayOf(initialPosition, initialVelocity)
         private set
@@ -30,6 +43,19 @@ class KalmanFilter1D(
 
     // Measurement noise variance
     private val r: Double = measurementNoiseStd.pow(2)
+
+    /** Initialize the filter to a measurement, with the given starting uncertainty. */
+    fun initialize(
+        position: Double,
+        positionVariance: Double = r,
+        velocityVariance: Double = 1.0
+    ) {
+        x = doubleArrayOf(position, 0.0)
+        p = arrayOf(
+            doubleArrayOf(positionVariance, 0.0),
+            doubleArrayOf(0.0, velocityVariance)
+        )
+    }
 
     /** Predict the state forward by time step [dt] (seconds). */
     fun predict(dt: Double) {
