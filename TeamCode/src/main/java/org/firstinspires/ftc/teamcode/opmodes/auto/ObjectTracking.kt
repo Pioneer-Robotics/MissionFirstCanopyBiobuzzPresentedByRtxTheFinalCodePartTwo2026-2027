@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto
 
 import android.util.Size
+import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.Constants
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.vision.opencv.ColorRange
 
 @Autonomous(name = "Object Tracking")
 class ObjectTracking: OpMode() {
+    // Dashboard
+    private val dashboardTelemetry = FtcDashboard.getInstance().telemetry
     // Odometry
     private lateinit var pinpoint: Pinpoint
     // Camera
@@ -25,7 +28,7 @@ class ObjectTracking: OpMode() {
     // Projection
     private val projector = GroundProjector(Constants.Camera.IMAGE_POINTS, Constants.Camera.GROUND_POINTS)
     // Tracking
-    private val tracker = ObjectTracker(processNoiseStd = 0.1, measurementNoiseStd = 1.0)
+    private val tracker = ObjectTracker(processNoiseStd = 2.0, measurementNoiseStd = 1.0)
     // Pose history
     private val poseHistory = PoseHistory(250)
     private var lastFrameNs = 0L
@@ -34,7 +37,7 @@ class ObjectTracking: OpMode() {
         camera = Camera(
             hardwareMap,
             processors = arrayOf(pollenColorBlob.processor, nectarColorBlob.processor),
-            resolution = Size(320, 240)
+            resolution = Size(640, 480)
         ).apply { init() }
 
         pinpoint = Pinpoint(hardwareMap)
@@ -42,6 +45,11 @@ class ObjectTracking: OpMode() {
 
     override fun loop() {
         tracker.update()
+
+        dashboardTelemetry.addData("Filtered X", tracker.getX())
+        dashboardTelemetry.addData("Filtered Y", tracker.getY())
+        dashboardTelemetry.update()
+
         poseHistory.record(pinpoint.pose)
 
         val frameCaptureNs = pollenColorBlob.processor.lastCaptureTimeNanos
@@ -58,7 +66,7 @@ class ObjectTracking: OpMode() {
             Pose(g.x, g.y)
         }
 
-        val chosen = tracker.selectDetection(candidates, robotPoseAtCapture) ?: return
-        tracker.onDetection(chosen, robotPoseAtCapture, frameCaptureNs)
+        val chosen = tracker.selectDetection(candidates, robotPoseAtCapture, gateChiSq = 10000.0) ?: return
+        tracker.onDetection(chosen, robotPoseAtCapture, lastFrameNs)
     }
 }

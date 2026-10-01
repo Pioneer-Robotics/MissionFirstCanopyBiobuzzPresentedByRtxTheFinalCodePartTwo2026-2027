@@ -19,10 +19,10 @@ class ColorBlob(
             .Builder()
             .apply { targetColor?.let { setTargetColorRange(it) } } // Only set if provided
             .setContourMode(ContourMode.EXTERNAL_ONLY)
-            .setBlurSize(10) // Smooth the transitions between different colors in image
-            .setDilateSize(15) // Expand blobs to fill any divots on the edges
-            .setErodeSize(15) // Shrink blobs back to original size
-            .setMorphOperationType(MorphOperationType.CLOSING)
+            .setBlurSize(3)
+            .setDilateSize(10)
+            .setErodeSize(15)
+            .setMorphOperationType(MorphOperationType.OPENING)
             .setRoi(ImageRegion.asUnityCenterCoordinates(-0.9, 0.9, 0.9, -0.9)) // Eliminate detection near edges
             .setDrawContours(draw)
             .setBoxFitColor(0) // Disable the drawing of rectangles
