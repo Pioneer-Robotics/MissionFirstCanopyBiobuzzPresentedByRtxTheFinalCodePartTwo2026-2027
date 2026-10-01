@@ -14,6 +14,7 @@ import com.pedropathing.ivy.pedro.PedroCommands.follow
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.hardware.LED
+import org.firstinspires.ftc.teamcode.helpers.withMaxVelocity
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 @Autonomous(name = "Solo Auto", group = "Autonomous")
@@ -39,9 +40,7 @@ class SoloAuto : OpMode() {
 
     // Autonomous routine
     fun autoRoutine(): Command = sequential(
-        instant { Constants.foresightConfig.maxVelocityConstraint.set(25.0) },
-        follow(follower, startToCollect()),
-        instant { Constants.foresightConfig.maxVelocityConstraint.set(ForesightConfig.Constraint.NONE) },
+        follow(follower, startToCollect()).withMaxVelocity(25.0),
         follow(follower, collectToShootFar()),
     )
 
