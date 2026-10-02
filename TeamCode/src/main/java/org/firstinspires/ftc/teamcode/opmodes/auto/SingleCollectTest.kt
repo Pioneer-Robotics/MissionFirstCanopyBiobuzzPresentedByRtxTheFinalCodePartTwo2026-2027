@@ -17,12 +17,13 @@ import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.vision.ColorBlob
 import org.firstinspires.ftc.teamcode.vision.GroundProjector
 import org.firstinspires.ftc.vision.opencv.ColorRange
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
 
 @Autonomous(name = "Intake Tracking")
-class IntakeTracking: OpMode() {
+class SingleCollectTest: OpMode() {
     // Dashboard
     private val dashboardTelemetry = FtcDashboard.getInstance().telemetry
     // Camera
@@ -34,7 +35,7 @@ class IntakeTracking: OpMode() {
     // Pedro pathing
     private val poseFactory = PoseFactory.degrees()
     private lateinit var follower: Follower
-
+    // Detection
     private var target = Pose()
     private var detected = false
 
@@ -46,7 +47,10 @@ class IntakeTracking: OpMode() {
         ).apply { init() }
 
         follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.create(hardwareMap)
-        follower.setPose(poseFactory.of(0.0, 0.0, 0.0))
+    }
+
+    override fun start() {
+        follower.setPose(poseFactory.of(0.0, 0.0, 90.0))
         follower.update()
     }
 
@@ -54,7 +58,7 @@ class IntakeTracking: OpMode() {
         if (detected) {
             follower.update()
             Scheduler.execute()
-            telemetry.addData("Detected:", target)
+            telemetry.addData("Field Coordinates", target)
             telemetry.update()
         } else {
             val blobs = pollenColorBlob.getBlobs()
@@ -69,9 +73,9 @@ class IntakeTracking: OpMode() {
             }
 
             val robotPose = Pose(
-                follower.pose().x(),
-                follower.pose().y(),
-                follower.pose().heading()
+                x = follower.pose().x(),
+                y = follower.pose().y(),
+                theta = follower.pose().heading()
             )
 
             val chosen = candidates.minByOrNull {
@@ -96,15 +100,19 @@ class IntakeTracking: OpMode() {
     private fun toField(cam: Pose, robot: Pose): Pose {
         val c = cos(robot.theta)
         val s = sin(robot.theta)
+
         return Pose(
-            -(robot.y + cam.y * c - cam.x * s),
-            robot.x + cam.y * s + cam.x * c
+            x = -(robot.x + cam.y * c - cam.x * s),
+            y = robot.y + cam.y * s + cam.x * c,
+            theta = robot.theta
         )
     }
 
     private fun buildPath(start: Pose, target: Pose): Path {
-        val startPoint = poseFactory.of(start.x, start.y, start.theta)
-        val endPoint = poseFactory.of(target.x, target.y, start.theta)
-        return line(startPoint, endPoint).constant(startPoint)
+        val endHeading = atan2(target.y - start.y, target.x - start.x)
+
+        val startPoint = poseFactory.of(start.x, start.y, Math.toDegrees(start.theta))
+        val endPoint = poseFactory.of(target.x, target.y, Math.toDegrees(endHeading))
+        return line(startPoint, endPoint).linear(startPoint, endPoint)
     }
 }

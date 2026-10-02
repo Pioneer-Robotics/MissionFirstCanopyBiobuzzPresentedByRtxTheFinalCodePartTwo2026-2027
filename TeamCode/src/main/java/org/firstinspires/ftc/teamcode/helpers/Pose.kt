@@ -24,6 +24,16 @@ data class Pose(
     val omega: Double = 0.0,
     val alpha: Double = 0.0,
 ) {
+    companion object {
+        fun fromPedro(pedroPose: com.pedropathing.math.Pose): Pose {
+            return Pose(
+                x = pedroPose.x(),
+                y = pedroPose.y(),
+                theta = pedroPose.heading()
+            )
+        }
+    }
+
     // Angle wrap to (-π, π] using atan2(sin,cos) for numeric stability
     private fun wrap(a: Double): Double = atan2(sin(a), cos(a))
 
