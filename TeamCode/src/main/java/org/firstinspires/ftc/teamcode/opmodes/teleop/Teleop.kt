@@ -20,8 +20,6 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private var changedAllianceColor = false
 
     override fun onInit() {
-        bot = Bot.fromType(BotType.COMP_BOT, hardwareMap)
-
         driver1 = TeleopDriver1(gamepad1, bot)
         driver2 = TeleopDriver2(gamepad2, bot)
     }
