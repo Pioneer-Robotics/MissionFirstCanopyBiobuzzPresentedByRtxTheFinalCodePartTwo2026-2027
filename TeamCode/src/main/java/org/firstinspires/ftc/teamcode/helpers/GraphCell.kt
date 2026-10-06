@@ -10,13 +10,13 @@ class GraphCell(
     var value: Double = Double.MAX_VALUE,
     var index: Pair<Int, Int> = Pair(-1, -1)
 ) {
-    val neighbors = MutableList(8) { Pair(-1,-1) }
+    val neighbors = MutableList(9) { Pair(-1,-1) }
     var parent: GraphCell? = null
 
-    init {
+    fun setNeighbors() {
         for (i in 0..8) {
-            if (i == 4) { continue }
             neighbors[i] = index + Pair(-1 + floorDiv(i, 3), -1 + i % 3)
         }
+        neighbors.removeAt(4)
     }
 }
