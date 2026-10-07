@@ -11,8 +11,8 @@ class Graph(
 ) {
     // Graph is a collapsed 2D array representing a grid of cells on the field, which algorithms use to find optimal paths
     private val graph = Array(dimX*dimY) { GraphCell() }
-    lateinit var start: Pair<Int, Int>
-    lateinit var target: Pair<Int, Int>
+    lateinit var start: Pair<Double, Double>
+    lateinit var target: Pair<Double, Double>
     var obs1 = GraphObstacle(Pair(130.0, 220.0), Pair(220.0, 130.0), dimX, dimY)
 
     init {
@@ -21,6 +21,12 @@ class Graph(
 
     fun in2D(x: Int, y: Int): Int {
         return dimX*x + y
+    }
+    fun fieldToIn(p: Pair<Double, Double>): Pair<Int,Int> {
+        return Pair(dimX/366.0 * p.first, dimY/366.0 * p.second).toInt()
+    }
+    fun inToField(p: Pair<Int, Int>): Pair<Double,Double> {
+        return Pair(366.0/dimX * p.first, 366.0/dimY * p.second)
     }
 
     private fun setupGraph() {
@@ -42,14 +48,17 @@ class Graph(
         }
     }
 
-    fun dijkstraPath(straightCost: Double = 1.0, diagCost: Double = sqrt(2.0)): MutableList<Pair<Int, Int>> {
+    fun dijkstraPath(straightCost: Double = 1.0, diagCost: Double = sqrt(2.0)): MutableList<Pair<Double, Double>> {
+
+        val startIn = fieldToIn(start)
+        val targetIn = fieldToIn(target)
 
         val queue = PriorityQueue<GraphCell> {
                 c1, c2 -> c1.value.compareTo(c2.value) // Min heap comparator
         }
 
-        graph[in2D(start.first,start.second)].value = 0.0
-        queue.add(graph[in2D(start.first,start.second)])
+        graph[in2D(startIn.first,startIn.second)].value = 0.0
+        queue.add(graph[in2D(startIn.first,startIn.second)])
 
         while (queue.isNotEmpty()) {
             val top = queue.poll()!!
@@ -79,14 +88,14 @@ class Graph(
             }
         }
 
-        val path = mutableListOf<Pair<Int, Int>>()
-        var lastCell = graph[in2D(target.first, target.second)]
+        val path = mutableListOf<Pair<Double, Double>>()
+        var lastCell = graph[in2D(targetIn.first, targetIn.second)]
         var lastCellIn = lastCell.index
 
-        path.add(Pair(lastCellIn.first * 366/dimX, lastCellIn.second * 366/dimY))
+        path.add(inToField(lastCellIn))
         lastCellIn = lastCell.parentIndex!!
-        while (lastCellIn != start) {
-            path.add(Pair(lastCellIn.first * 366/dimX, lastCellIn.second * 366/dimY))
+        while (lastCellIn != startIn) {
+            path.add(inToField(lastCellIn))
             lastCell = graph[in2D(lastCellIn.first, lastCellIn.second)]
             lastCellIn = lastCell.parentIndex!!
         }
