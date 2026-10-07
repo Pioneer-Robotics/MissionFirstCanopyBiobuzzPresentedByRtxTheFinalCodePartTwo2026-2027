@@ -2,16 +2,13 @@ package org.firstinspires.ftc.teamcode.helpers
 
 import java.lang.Math.floorDiv
 
-operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> {
-    return Pair(this.first + other.first, this.second + other.second)
-}
-
+// Objects for each unit of the field used for dijkstra's algorithm (or A*, etc)
 class GraphCell(
     var value: Double = Double.MAX_VALUE,
     var index: Pair<Int, Int> = Pair(-1, -1)
 ) {
     val neighbors = MutableList(9) { Pair(-1,-1) }
-    var parent: GraphCell? = null
+    var parentIndex: Pair<Int, Int>? = null
 
     fun setNeighbors() {
         for (i in 0..8) {

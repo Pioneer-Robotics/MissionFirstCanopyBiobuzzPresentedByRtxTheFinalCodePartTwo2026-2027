@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.helpers
 
 import java.util.PriorityQueue
 
+// Class for representing the field as an array of cells (nodes) to solve path optimization problems
+// The field is represented as a 1D instead of a 2D array for easier computation
 class Graph(
     val dimX: Int,
     val dimY: Int
@@ -37,7 +39,7 @@ class Graph(
         for (i in 0..<dimX) {
             for (j in 0..<dimY) {
                 graph[in2D(i,j)].value = Double.MAX_VALUE
-                graph[in2D(i,j)].parent = null
+                graph[in2D(i,j)].parentIndex = null
             }
         }
     }
@@ -73,7 +75,7 @@ class Graph(
                 val newVal = minCell.value + (if (straight) straightCost else diagCost)
                 if (newVal < nCell.value) {
                     nCell.value = newVal
-                    nCell.parent = minCell
+                    nCell.parentIndex = minCell.index
                     queue.add(nCell)
                 }
             }
@@ -81,10 +83,14 @@ class Graph(
 
         val path = mutableListOf<Pair<Int, Int>>()
         var lastCell = graph[in2D(target.first, target.second)]
-        path.add(lastCell.index)
-        while (lastCell.index != start) {
-            lastCell = lastCell.parent!!
-            path.add(lastCell.index)
+        var lastCellIn = lastCell.index
+
+        path.add(lastCellIn)
+        lastCellIn = lastCell.parentIndex!!
+        while (lastCellIn != start) {
+            path.add(lastCellIn)
+            lastCell = graph[in2D(lastCellIn.first, lastCellIn.second)]
+            lastCellIn = lastCell.parentIndex!!
         }
 
         return path
