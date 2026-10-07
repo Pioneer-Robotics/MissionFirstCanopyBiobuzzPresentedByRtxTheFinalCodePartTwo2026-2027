@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.helpers
+package org.firstinspires.ftc.teamcode.helpers.graph
 
 import java.util.PriorityQueue
 import kotlin.math.sqrt
@@ -13,7 +13,7 @@ class Graph(
     private val graph = Array(dimX*dimY) { GraphCell() }
     lateinit var start: Pair<Int, Int>
     lateinit var target: Pair<Int, Int>
-    var obs1 = GraphObstacle(Pair(200.0, 200.0), Pair(50.0, 50.0), dimX, dimY)
+    var obs1 = GraphObstacle(Pair(130.0, 220.0), Pair(220.0, 130.0), dimX, dimY)
 
     init {
         setupGraph()

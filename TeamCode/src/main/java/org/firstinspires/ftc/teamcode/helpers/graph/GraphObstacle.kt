@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.helpers
+package org.firstinspires.ftc.teamcode.helpers.graph
 
 /**
  * Creates lines that are interpreted as obstacles for path optimization problems
