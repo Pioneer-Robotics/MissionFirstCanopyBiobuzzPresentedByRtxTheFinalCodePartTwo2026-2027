@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.helpers
 
 import java.util.PriorityQueue
+import kotlin.math.sqrt
 
 // Class for representing the field as an array of cells (nodes) to solve path optimization problems
 // The field is represented as a 1D instead of a 2D array for easier computation
@@ -12,39 +13,36 @@ class Graph(
     private val graph = Array(dimX*dimY) { GraphCell() }
     lateinit var start: Pair<Int, Int>
     lateinit var target: Pair<Int, Int>
+    var obs1 = GraphObstacle(Pair(200.0, 200.0), Pair(50.0, 50.0), dimX, dimY)
 
     init {
-        setGraphIndices()
-        addObstacles()
+        setupGraph()
     }
 
     fun in2D(x: Int, y: Int): Int {
         return dimX*x + y
     }
 
-    private fun setGraphIndices() {
+    private fun setupGraph() {
         for (i in 0..<dimX) {
             for (j in 0..<dimY) {
                 graph[in2D(i,j)].index = Pair(i,j)
                 graph[in2D(i,j)].setNeighbors()
+                obs1.applyObs(graph[in2D(i,j)])
             }
         }
-    }
-
-    private fun addObstacles() {
-        // TODO: Make work
     }
 
     private fun resetGraph() {
         for (i in 0..<dimX) {
             for (j in 0..<dimY) {
-                graph[in2D(i,j)].value = Double.MAX_VALUE
+                obs1.applyObs(graph[in2D(i,j)])
                 graph[in2D(i,j)].parentIndex = null
             }
         }
     }
 
-    fun dijkstraPath(straightCost: Double = 1.0, diagCost: Double = 1.41421): MutableList<Pair<Int, Int>> {
+    fun dijkstraPath(straightCost: Double = 1.0, diagCost: Double = sqrt(2.0)): MutableList<Pair<Int, Int>> {
 
         val queue = PriorityQueue<GraphCell> {
                 c1, c2 -> c1.value.compareTo(c2.value) // Min heap comparator
@@ -85,10 +83,10 @@ class Graph(
         var lastCell = graph[in2D(target.first, target.second)]
         var lastCellIn = lastCell.index
 
-        path.add(lastCellIn)
+        path.add(Pair(lastCellIn.first * 366/dimX, lastCellIn.second * 366/dimY))
         lastCellIn = lastCell.parentIndex!!
         while (lastCellIn != start) {
-            path.add(lastCellIn)
+            path.add(Pair(lastCellIn.first * 366/dimX, lastCellIn.second * 366/dimY))
             lastCell = graph[in2D(lastCellIn.first, lastCellIn.second)]
             lastCellIn = lastCell.parentIndex!!
         }
