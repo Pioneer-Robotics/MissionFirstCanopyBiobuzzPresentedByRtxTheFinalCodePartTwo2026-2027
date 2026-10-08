@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.helpers.graph
 
 import java.util.PriorityQueue
+import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.sqrt
 
 // Class for representing the field as an array of cells (nodes) to solve path optimization problems
@@ -39,7 +41,7 @@ class Graph(
         }
     }
 
-    private fun resetGraph() {
+    fun resetGraph() {
         for (i in 0..<dimX) {
             for (j in 0..<dimY) {
                 obs1.applyObs(graph[in2D(i,j)])
@@ -48,7 +50,7 @@ class Graph(
         }
     }
 
-    fun dijkstraPath(straightCost: Double = 1.0, diagCost: Double = sqrt(2.0)): MutableList<Pair<Double, Double>> {
+    fun dijkstraPath(aStar: Boolean = true, straightCost: Double = 1.0, diagCost: Double = sqrt(2.0)): MutableList<Pair<Double, Double>> {
 
         val startIn = fieldToIn(start)
         val targetIn = fieldToIn(target)
@@ -63,10 +65,19 @@ class Graph(
         while (queue.isNotEmpty()) {
             val top = queue.poll()!!
             val index = top.index
+            if (aStar and (index == targetIn)) { break } // With A*, break when the current cell we are checking is the end
+
             val minCell = graph[in2D(index.first,index.second)]
 
             if (top.value > minCell.value) {
                 continue
+            }
+
+            var heuristic = 0.0
+            if (aStar) {
+                val dx = abs(minCell.index.first - targetIn.first)
+                val dy = abs(minCell.index.second - targetIn.second)
+                heuristic = dx + dy + (sqrt(2.0) - 2) * min(dx, dy)
             }
 
             for (n in top.neighbors) {
@@ -78,8 +89,8 @@ class Graph(
                 if (nCell.value == -1.0) { continue } // Cell is an obstacle
 
                 val straight = (minCell.index.first == n.first) or (minCell.index.second == n.second)
+                val newVal = minCell.value + (if (straight) straightCost else diagCost) + heuristic
 
-                val newVal = minCell.value + (if (straight) straightCost else diagCost)
                 if (newVal < nCell.value) {
                     nCell.value = newVal
                     nCell.parentIndex = minCell.index
@@ -99,6 +110,7 @@ class Graph(
             lastCell = graph[in2D(lastCellIn.first, lastCellIn.second)]
             lastCellIn = lastCell.parentIndex!!
         }
+        path.add(inToField(lastCellIn))
 
         return path
     }

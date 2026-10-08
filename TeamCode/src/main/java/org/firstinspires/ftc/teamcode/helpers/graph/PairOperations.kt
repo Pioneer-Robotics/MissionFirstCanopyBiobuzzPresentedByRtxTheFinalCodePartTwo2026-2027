@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.helpers.graph
 
 import kotlin.math.sqrt
 
+// Kotlin doesn't seem to have a good class for vector operations, so anything I need I'll just update here
+
 // Double
-// TODO: This is stupid I will change to vectors, I just don't wanna do it right now
 
 @JvmName("plusDoublePair")
 operator fun Pair<Double, Double>.plus(other: Pair<Double, Double>): Pair<Double, Double> {
