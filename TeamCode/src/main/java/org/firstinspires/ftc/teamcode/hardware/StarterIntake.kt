@@ -1,4 +1,4 @@
-package pioneer.hardware
+package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
-import kotlin.time.Duration.Companion.seconds
 
 class StarterIntake(
     private val hardwareMap: HardwareMap,
@@ -72,12 +70,12 @@ class StarterIntake(
 
     fun forward() {
         if (paused) return
-        power = -defaultPower
+        power = defaultPower
     }
 
     fun reverse() {
         if (paused) return
-        power = defaultPower
+        power = -defaultPower
     }
 
     fun stop() {

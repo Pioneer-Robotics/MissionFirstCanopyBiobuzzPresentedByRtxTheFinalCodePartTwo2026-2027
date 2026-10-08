@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Constants
 class TransferServo (
     private val hardwareMap: HardwareMap,
     private val transferServoName: String = Constants.HardwareNames.TRANSFER_SERVO
-): HardwareComponent{
+): HardwareComponent {
     private lateinit var transferServo: CRServo
 
     private var power = 1.0

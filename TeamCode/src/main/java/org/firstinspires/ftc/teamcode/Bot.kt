@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.TransferServo
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
 import org.firstinspires.ftc.teamcode.pioneerPathing.follower.Follower
 import org.firstinspires.ftc.teamcode.vision.AprilTag
-import pioneer.hardware.StarterIntake
+import org.firstinspires.ftc.teamcode.hardware.StarterIntake
 
 enum class BotType {
     MECANUM_BOT,
@@ -57,7 +57,7 @@ class Bot private constructor(
     val flywheel get() = get<Flywheel>()
     val intakeServos get() = get<IntakeServos>()
     val transferServo get() = get<TransferServo>()
-//    val starterIntake get() = get<StarterIntake>()
+    val starterIntake get() = get<StarterIntake>()
 
     // Follower is lazily initialized (only if accessed)
     // and will error if localizer or mecanumBase is missing
@@ -111,7 +111,7 @@ class Bot private constructor(
                 BotType.GOBILDA_STARTER_BOT ->
                     builder()
                         .add(MecanumBase(hardwareMap))
-//                        .add(StarterIntake(hardwareMap))
+                        .add(StarterIntake(hardwareMap))
                         .add(Flywheel(hardwareMap))
                         .add(TransferServo(hardwareMap))
                         .add(IntakeServos(hardwareMap))

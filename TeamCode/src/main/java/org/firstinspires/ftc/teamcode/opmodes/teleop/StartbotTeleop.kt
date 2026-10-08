@@ -18,10 +18,6 @@ class StartbotTeleop: BaseOpMode(BotType.GOBILDA_STARTER_BOT) {
     private var transferToggle: Toggle = Toggle(false)
     private var flywheelToggle: Toggle = Toggle(false)
 
-    override fun onInit() {
-        bot = Bot.fromType(BotType.GOBILDA_STARTER_BOT, hardwareMap)
-    }
-
     override fun onLoop() {
         drive()
         updateDrivePower()
@@ -56,14 +52,14 @@ class StartbotTeleop: BaseOpMode(BotType.GOBILDA_STARTER_BOT) {
     }
 
     private fun handleIntake(){
-//        intakeToggle.toggle(gamepad1.square)
-//        if (intakeToggle.state) {
-//            bot.starterIntake?.forward()
-//            bot.intakeServos?.turnOn()
-//        } else {
-//            bot.starterIntake?.stop()
-//            bot.intakeServos?.turnOff()
-//        }
+        intakeToggle.toggle(gamepad1.square)
+        if (intakeToggle.state) {
+            bot.starterIntake?.forward()
+            bot.intakeServos?.turnOn()
+        } else {
+            bot.starterIntake?.stop()
+            bot.intakeServos?.turnOff()
+        }
     }
 
     private fun handleTransfer(){
@@ -78,11 +74,9 @@ class StartbotTeleop: BaseOpMode(BotType.GOBILDA_STARTER_BOT) {
     private fun handleFlywheel(){
         flywheelToggle.toggle(gamepad1.dpad_right)
         if (flywheelToggle.state){
-            bot.flywheel?.targetVelocity = 0.8
+            bot.flywheel?.velocity = 1250.0
         } else {
-            bot.flywheel?.targetVelocity = 0.0
+            bot.flywheel?.velocity = 0.0
         }
     }
-
-
 }

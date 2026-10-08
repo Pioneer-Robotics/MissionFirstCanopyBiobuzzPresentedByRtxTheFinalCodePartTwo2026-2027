@@ -31,22 +31,12 @@ class Flywheel(
             }
     }
 
-    var targetVelocity = 0.0
-
     var velocity
         get() = flywheel.velocity
         set(value) {
-            targetVelocity = value
+            flywheel.velocity = value
         }
 
     val current
         get() = flywheel.getCurrent(CurrentUnit.MILLIAMPS)
-
-    override fun update() {
-        if (targetVelocity == 0.0) {
-            flywheel.power = 0.0
-            return
-        }
-        flywheel.power = targetVelocity
-    }
 }

@@ -20,7 +20,7 @@ class IntakeServos (
     }
 
     fun turnOn() {
-        servoL.power = power
+        servoL.power = -power
         servoR.power = power
     }
 
