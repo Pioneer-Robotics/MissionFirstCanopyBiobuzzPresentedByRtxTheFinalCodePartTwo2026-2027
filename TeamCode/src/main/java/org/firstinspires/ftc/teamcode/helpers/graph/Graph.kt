@@ -44,6 +44,7 @@ class Graph(
     fun resetGraph() {
         for (i in 0..<dimX) {
             for (j in 0..<dimY) {
+                graph[in2D(i,j)].value = Double.MAX_VALUE
                 obs1.applyObs(graph[in2D(i,j)])
                 graph[in2D(i,j)].parentIndex = null
             }
@@ -56,12 +57,21 @@ class Graph(
         val targetIn = fieldToIn(target)
 
         val queue = PriorityQueue<GraphCell> {
-                c1, c2 -> c1.value.compareTo(c2.value) // Min heap comparator
+                c1, c2 -> (c1.value + c1.heuristic).compareTo(c2.value + c2.heuristic) // Min heap comparator
+        }
+
+        for (c in graph) {
+            if (aStar) {
+                val dx = abs(c.index.first - targetIn.first)
+                val dy = abs(c.index.second - targetIn.second)
+                c.heuristic = dx + dy + (sqrt(2.0) - 2) * min(dx, dy)
+            } else {
+                c.heuristic = 0.0
+            }
         }
 
         graph[in2D(startIn.first,startIn.second)].value = 0.0
         queue.add(graph[in2D(startIn.first,startIn.second)])
-
         while (queue.isNotEmpty()) {
             val top = queue.poll()!!
             val index = top.index
@@ -73,13 +83,6 @@ class Graph(
                 continue
             }
 
-            var heuristic = 0.0
-            if (aStar) {
-                val dx = abs(minCell.index.first - targetIn.first)
-                val dy = abs(minCell.index.second - targetIn.second)
-                heuristic = dx + dy + (sqrt(2.0) - 2) * min(dx, dy)
-            }
-
             for (n in top.neighbors) {
                 val i = in2D(n.first, n.second)
                 if ((n.first < 0) or (n.first >= dimX) or (n.second < 0) or (n.second >= dimY)) {
@@ -89,7 +92,7 @@ class Graph(
                 if (nCell.value == -1.0) { continue } // Cell is an obstacle
 
                 val straight = (minCell.index.first == n.first) or (minCell.index.second == n.second)
-                val newVal = minCell.value + (if (straight) straightCost else diagCost) + heuristic
+                val newVal = minCell.value + (if (straight) straightCost else diagCost)
 
                 if (newVal < nCell.value) {
                     nCell.value = newVal

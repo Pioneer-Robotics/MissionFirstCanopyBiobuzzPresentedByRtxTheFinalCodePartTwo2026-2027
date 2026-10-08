@@ -9,6 +9,7 @@ class GraphCell(
 ) {
     val neighbors = MutableList(9) { Pair(-1,-1) }
     var parentIndex: Pair<Int, Int>? = null
+    var heuristic = 0.0
 
     fun setNeighbors() {
         for (i in 0..8) {
