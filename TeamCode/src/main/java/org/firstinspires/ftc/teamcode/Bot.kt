@@ -4,15 +4,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.hardware.BatteryMonitor
 import org.firstinspires.ftc.teamcode.hardware.Camera
+import org.firstinspires.ftc.teamcode.hardware.Flywheel
 import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
+import org.firstinspires.ftc.teamcode.hardware.IntakeServos
 import org.firstinspires.ftc.teamcode.hardware.LED
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
+import org.firstinspires.ftc.teamcode.hardware.TransferServo
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
 import org.firstinspires.ftc.teamcode.pioneerPathing.follower.Follower
 import org.firstinspires.ftc.teamcode.vision.AprilTag
+import pioneer.hardware.StarterIntake
 
 enum class BotType {
     MECANUM_BOT,
+    GOBILDA_STARTER_BOT,
     COMP_BOT,
     CUSTOM,
 }
@@ -48,6 +53,11 @@ class Bot private constructor(
     val camera get() = get<Camera>()
     val batteryMonitor get() = get<BatteryMonitor>()
     val led get() = get<LED>()
+
+    val flywheel get() = get<Flywheel>()
+    val intakeServos get() = get<IntakeServos>()
+    val transferServo get() = get<TransferServo>()
+//    val starterIntake get() = get<StarterIntake>()
 
     // Follower is lazily initialized (only if accessed)
     // and will error if localizer or mecanumBase is missing
@@ -97,6 +107,14 @@ class Bot private constructor(
                         .add(MecanumBase(hardwareMap))
                         .add(Pinpoint(hardwareMap))
                         .add(BatteryMonitor(hardwareMap))
+                        .build()
+                BotType.GOBILDA_STARTER_BOT ->
+                    builder()
+                        .add(MecanumBase(hardwareMap))
+//                        .add(StarterIntake(hardwareMap))
+                        .add(Flywheel(hardwareMap))
+                        .add(TransferServo(hardwareMap))
+                        .add(IntakeServos(hardwareMap))
                         .build()
                 BotType.COMP_BOT ->
                     builder()

@@ -38,6 +38,10 @@ object Constants {
         const val LAUNCH_SERVO_R = "launchServoR"
         const val PTO_SERVO_L = "leftPTO"
         const val PTO_SERVO_R = "rightPTO"
+        const val TRANSFER_SERVO = "transferServo"
+        const val INTAKE_SERVO_L = "intakeServoL"
+        const val INTAKE_SERVO_R = "intakeServoR"
+
 
         // Other
         const val WEBCAM = "Webcam 1"
