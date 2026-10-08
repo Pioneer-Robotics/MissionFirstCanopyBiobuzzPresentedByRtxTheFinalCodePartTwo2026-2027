@@ -15,15 +15,11 @@ inline fun <reified T : Enum<T>> T.next(step: Int = 1): T {
 }
 
 /** Sets the maximum velocity for the command. */
-fun Command.withMaxVelocity(velocity: Double): Command =
-    sequential(
-        instant {
-            Constants.foresightConfig.maxVelocityConstraint.set(velocity)
-        },
+fun Command.withMaxVelocity(velocity: Double): Command {
+    val prevVelocityConstraint = Constants.foresightConfig.maxVelocityConstraint.get()
+    return sequential(
+        instant { Constants.foresightConfig.maxVelocityConstraint.set(velocity) },
         this,
-        instant {
-            Constants.foresightConfig.maxVelocityConstraint.set(
-                ForesightConfig.Constraint.NONE
-            )
-        }
+        instant { Constants.foresightConfig.maxVelocityConstraint.set(prevVelocityConstraint) }
     )
+}
