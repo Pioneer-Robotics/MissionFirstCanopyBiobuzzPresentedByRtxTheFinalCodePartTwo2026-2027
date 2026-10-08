@@ -8,7 +8,7 @@ class GraphTest {
 
     @Test
     fun main() {
-        val graph = Graph(500, 500)
+        val graph = Graph(50, 50)
         graph.start = Pair(120.0,120.0)
         graph.target = Pair(230.0,230.0)
 

@@ -29,11 +29,11 @@ class GraphObstacle(val p1: Pair<Double, Double>,
 
     fun applyObs(cell: GraphCell) {
         val p = cell.index.toDouble()
+        if (shouldApply(p)) cell.value = -1.0 else cell.value = Double.MAX_VALUE
+    }
+
+    fun shouldApply(p: Pair<Double, Double>): Boolean {
         val dist = distToLineSeg(graphP1, graphP2, p)
-        if (dist <= graphTol) {
-            cell.value = -1.0
-        } else {
-            cell.value = Double.MAX_VALUE
-        }
+        return (dist <= graphTol)
     }
 }

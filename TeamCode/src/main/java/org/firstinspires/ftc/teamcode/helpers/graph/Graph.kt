@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.helpers.graph
 
+import org.firstinspires.ftc.teamcode.biobuzz.Points
+import org.firstinspires.ftc.teamcode.general.AllianceColor
 import java.util.PriorityQueue
 import kotlin.math.abs
 import kotlin.math.min
@@ -9,15 +11,17 @@ import kotlin.math.sqrt
 // The field is represented as a 1D instead of a 2D array for easier computation
 class Graph(
     val dimX: Int,
-    val dimY: Int
+    val dimY: Int,
+    val addField: Boolean = false
 ) {
     // Graph is a collapsed 2D array representing a grid of cells on the field, which algorithms use to find optimal paths
-    private val graph = Array(dimX*dimY) { GraphCell() }
+    /*private*/ val graph = Array(dimX*dimY) { GraphCell() }
     lateinit var start: Pair<Double, Double>
     lateinit var target: Pair<Double, Double>
-    var obs1 = GraphObstacle(Pair(130.0, 220.0), Pair(220.0, 130.0), dimX, dimY)
+    val obstacles = GraphObstacleConglomerate(dimX, dimY, tol = 36.0)
 
     init {
+        if (addField) { addFieldObstacles() }
         setupGraph()
     }
 
@@ -25,10 +29,31 @@ class Graph(
         return dimX*x + y
     }
     fun fieldToIn(p: Pair<Double, Double>): Pair<Int,Int> {
-        return Pair(dimX/366.0 * p.first, dimY/366.0 * p.second).toInt()
+        val p2 = p // Set bottom left as (0, 0) for internal
+        return Pair(dimX/360.0 * p2.first, dimY/360.0 * p2.second).toInt()
     }
     fun inToField(p: Pair<Int, Int>): Pair<Double,Double> {
-        return Pair(366.0/dimX * p.first, 366.0/dimY * p.second)
+        return Pair(360.0/dimX * p.first, 360.0/dimY * p.second) // Set center to (0, 0) for output
+    }
+
+    fun addFieldObstacles() {
+        val pts = Points(AllianceColor.RED)
+
+        // Walls
+        obstacles.addObs(pts.fieldUR, pts.fieldDR)
+        obstacles.addObs(pts.fieldDR, pts.fieldDL)
+        obstacles.addObs(pts.fieldDL, pts.fieldUL)
+        obstacles.addObs(pts.fieldUL, pts.fieldUR)
+
+        // Hive
+        obstacles.addObs(pts.hiveUR, pts.hiveDR)
+        obstacles.addObs(pts.hiveDL, pts.hiveUL)
+
+        // Flowers
+        obstacles.addObs(pts.flower1DL, pts.flower1DR)
+        obstacles.addObs(pts.flower2DL, pts.flower2DR)
+        obstacles.addObs(pts.flower3DL, pts.flower3DR)
+        obstacles.addObs(pts.flower4DL, pts.flower4DR)
     }
 
     private fun setupGraph() {
@@ -36,7 +61,7 @@ class Graph(
             for (j in 0..<dimY) {
                 graph[in2D(i,j)].index = Pair(i,j)
                 graph[in2D(i,j)].setNeighbors()
-                obs1.applyObs(graph[in2D(i,j)])
+                obstacles.applyObs(graph[in2D(i,j)])
             }
         }
     }
@@ -44,8 +69,7 @@ class Graph(
     fun resetGraph() {
         for (i in 0..<dimX) {
             for (j in 0..<dimY) {
-                graph[in2D(i,j)].value = Double.MAX_VALUE
-                obs1.applyObs(graph[in2D(i,j)])
+                obstacles.applyObs(graph[in2D(i,j)])
                 graph[in2D(i,j)].parentIndex = null
             }
         }
