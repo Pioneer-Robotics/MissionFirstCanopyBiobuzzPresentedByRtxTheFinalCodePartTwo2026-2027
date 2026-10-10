@@ -19,10 +19,10 @@ object Constants {
         const val DRIVE_RIGHT_BACK = "driveRB"
 
         // Other motors
-        const val FLYWHEEL = "flywheelMotor"
-        const val INTAKE_MOTOR = "intakeMotor"
-        const val TURRET_MOTOR = "turretMotor"
-        const val SPINDEXER_MOTOR = "spindexerMotor"
+        const val FLYWHEEL1 = "flywheelMotor1"
+        const val FLYWHEEL2 = "flywheelMotor2"
+        const val INTAKE = "intake"
+        const val TRANSFER = "transfer"
 
         // Odometry
         const val ODO_LEFT = "odoLeft"
@@ -33,15 +33,9 @@ object Constants {
         const val PINPOINT = "pinpoint"
 
         // Servos
-        const val LAUNCH_SERVO = "launchServo"
-        const val LAUNCH_SERVO_L = "launchServoL"
-        const val LAUNCH_SERVO_R = "launchServoR"
-        const val PTO_SERVO_L = "leftPTO"
-        const val PTO_SERVO_R = "rightPTO"
 
         // Other
         const val WEBCAM = "Webcam 1"
-        const val INTAKE_SENSOR = "intakeSensor"
         const val LED_DRIVER = "prism"
     }
 

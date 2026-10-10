@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.Constants
 import kotlin.math.abs
 
 class DualFlywheel(
     private val hardwareMap: HardwareMap,
-    private val motor1Name: String,
-    private val motor2Name: String,
+    private val motor1Name: String = Constants.HardwareNames.FLYWHEEL1,
+    private val motor2Name: String = Constants.HardwareNames.FLYWHEEL2,
 ) : HardwareComponent {
     private lateinit var leader: DcMotorEx
     private lateinit var follower: DcMotorEx
