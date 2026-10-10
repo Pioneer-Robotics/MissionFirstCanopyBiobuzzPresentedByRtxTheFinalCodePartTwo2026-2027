@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.helpers.graph
 
+import com.pedropathing.math.Pose
 import kotlin.math.sqrt
 
 // Kotlin doesn't seem to have a good class for vector operations, so anything I need I'll just update here
@@ -25,6 +26,9 @@ fun Pair<Double, Double>.abs(): Double {
 }
 fun Pair<Double, Double>.toInt(): Pair<Int, Int> {
     return Pair(this.first.toInt(), this.second.toInt())
+}
+fun Pair<Double, Double>.toPose(): Pose {
+    return Pose(this.first, this.second)
 }
 
 // Int

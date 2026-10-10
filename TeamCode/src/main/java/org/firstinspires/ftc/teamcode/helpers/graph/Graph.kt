@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.helpers.graph
 
+import com.pedropathing.api.PoseFactory
+import com.pedropathing.math.Pose
 import org.firstinspires.ftc.teamcode.biobuzz.Points
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import java.util.PriorityQueue
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -140,5 +143,28 @@ class Graph(
         path.add(inToField(lastCellIn))
 
         return path
+    }
+
+    fun pathToBezier(pts: MutableList<Pair<Double, Double>>): MutableList<Pose> {
+        val bezier = mutableListOf<Pose>()
+        val bezIn = mutableListOf<Int>()
+        var d0 = pts[1] - pts[0]
+
+        bezier.add(pts[0].toPose())
+        bezIn.add(0)
+
+        for (i in 1..<pts.size-1) {
+            val d = pts[i+1] - pts[i]
+            if ((d - d0).abs() > 0.0001) { // pts[i+1] is no longer colinear, pts[i] is the last in the line
+                                           // Approximate inequality used cuz floating point error
+                d0 = pts[i+1] - pts[i]
+                if (bezIn.last() + ceil(dimX.toDouble() / 12.0) < i) { // Must be a few points in between every bezier point
+                    bezier.add(pts[i].toPose())
+                    bezIn.add(i)
+                }
+            }
+        }
+        bezier.add(pts[pts.size-1].toPose())
+        return bezier
     }
 }
