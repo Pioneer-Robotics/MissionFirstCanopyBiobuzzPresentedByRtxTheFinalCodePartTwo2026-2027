@@ -15,7 +15,7 @@ class Intake(
     override fun init() {
         motor = hardwareMap.get(DcMotorEx::class.java, motorName)
 
-        motor.direction = DcMotorSimple.Direction.FORWARD
+        motor.direction = DcMotorSimple.Direction.REVERSE
         motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }

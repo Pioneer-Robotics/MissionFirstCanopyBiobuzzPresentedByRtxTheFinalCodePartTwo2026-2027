@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.IMU
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.hardware.Intake
@@ -9,6 +12,9 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.hardware.Transfer
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.helpers.Toggle
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 @TeleOp(name = "Basic Biobuzz Teleop")
 class BasicBioBuzzTeleop : OpMode() {
@@ -22,24 +28,38 @@ class BasicBioBuzzTeleop : OpMode() {
     private lateinit var intake: Intake
     private lateinit var transfer: Transfer
     private lateinit var flywheel: DualFlywheel
+    private lateinit var imu: IMU
 
     override fun init() {
-        mecanumBase = MecanumBase(hardwareMap)
-        intake = Intake(hardwareMap)
-        transfer = Transfer(hardwareMap)
-        flywheel = DualFlywheel(hardwareMap)
+        mecanumBase = MecanumBase(hardwareMap).apply { init() }
+        intake = Intake(hardwareMap).apply { init() }
+
+        imu = hardwareMap.get(IMU::class.java, "imu")
+        val logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        val usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        val orientationOnRobot = RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(IMU.Parameters(orientationOnRobot));
+        imu.resetYaw()
+//        transfer = Transfer(hardwareMap)
+//        flywheel = DualFlywheel(hardwareMap)
     }
 
     override fun loop() {
         drive()
         updateDrivePower()
         handleIntake()
-        handleTransferToShoot()
-        handleFlywheel()
+        handleResetYaw()
+//        handleTransferToShoot()
+//        handleFlywheel()
+
+        handleTelemetry()
     }
 
     private fun drive() {
-        val direction = Pose(gamepad1.left_stick_x.toDouble(), -gamepad1.left_stick_y.toDouble())
+        var direction = Pose(gamepad1.left_stick_x.toDouble(), -gamepad1.left_stick_y.toDouble())
+        var angle = atan2(direction.y, direction.x) - imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+        val mag = direction.getLength()
+        direction = Pose(mag * cos(angle), mag * sin(angle))
         mecanumBase.setDrivePower(
             Pose(
                 vx = direction.x,
@@ -52,8 +72,8 @@ class BasicBioBuzzTeleop : OpMode() {
     }
 
     private fun updateDrivePower() {
-        incDrivePower.toggle(gamepad1.right_bumper)
-        decDrivePower.toggle(gamepad1.left_bumper)
+        incDrivePower.toggle(gamepad1.dpad_up)
+        decDrivePower.toggle(gamepad1.dpad_down)
         if (incDrivePower.justChanged) {
             drivePower += 0.1
         }
@@ -61,6 +81,12 @@ class BasicBioBuzzTeleop : OpMode() {
             drivePower -= 0.1
         }
         drivePower = drivePower.coerceIn(0.1, 1.0)
+    }
+
+    private fun handleResetYaw() {
+        if ((gamepad1.left_trigger > 0.8) and (gamepad1.right_trigger > 0.8)) {
+            imu.resetYaw()
+        }
     }
 
     private fun handleIntake() {
@@ -87,5 +113,10 @@ class BasicBioBuzzTeleop : OpMode() {
         if (flywheelToggle.state) {
             flywheel.setVelocity(2000.0) // TODO: Get accurate velocities based on distance
         }
+    }
+
+    private fun handleTelemetry() {
+        telemetry.addData("Drive Power Mult", drivePower)
+        telemetry.update()
     }
 }

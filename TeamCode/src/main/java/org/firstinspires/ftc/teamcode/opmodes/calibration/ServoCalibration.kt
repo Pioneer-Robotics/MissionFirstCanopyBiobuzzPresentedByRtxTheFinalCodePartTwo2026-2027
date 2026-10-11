@@ -13,7 +13,7 @@ class ServoCalibration : OpMode() {
     var toggled = false
 
     override fun init() {
-        servo = hardwareMap.get(Servo::class.java, Constants.HardwareNames.PTO_SERVO_R)
+//        servo = hardwareMap.get(Servo::class.java, Constants.HardwareNames.PTO_SERVO_R)
     }
 
     override fun loop() {
