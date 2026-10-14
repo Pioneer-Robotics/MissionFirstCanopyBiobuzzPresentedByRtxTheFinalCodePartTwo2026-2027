@@ -8,8 +8,8 @@ class PathToBezTest {
     @Test
     fun main() {
         val graph = Graph(50, 50, addField = true)
-        graph.start = Pair(45.0,45.0)
-        graph.target = Pair(300.0,300.0)
+        graph.setStart(Pair(45.0,45.0))
+        graph.setTarget(Pair(300.0,300.0))
 
         val path = graph.dijkstraPath(aStar = true)
         val bez = graph.pathToBezier(path)

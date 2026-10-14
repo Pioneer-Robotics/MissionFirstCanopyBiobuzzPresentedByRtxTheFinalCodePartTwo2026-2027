@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.helpers.graph
 
-import com.pedropathing.api.PoseFactory
 import com.pedropathing.math.Pose
 import org.firstinspires.ftc.teamcode.biobuzz.Points
 import org.firstinspires.ftc.teamcode.general.AllianceColor
@@ -19,8 +18,11 @@ class Graph(
 ) {
     // Graph is a collapsed 2D array representing a grid of cells on the field, which algorithms use to find optimal paths
     /*private*/ val graph = Array(dimX*dimY) { GraphCell() }
-    lateinit var start: Pair<Double, Double>
-    lateinit var target: Pair<Double, Double>
+    private lateinit var start: Pair<Double, Double>
+    private lateinit var target: Pair<Double, Double>
+    private var startBlocked = true
+    private var targetBlocked = true
+
     val obstacles = GraphObstacleConglomerate(dimX, dimY, tol = 36.0)
 
     init {
@@ -37,6 +39,18 @@ class Graph(
     }
     fun inToField(p: Pair<Int, Int>): Pair<Double,Double> {
         return Pair(360.0/dimX * p.first, 360.0/dimY * p.second) // Set center to (0, 0) for output
+    }
+
+    fun setStart(start: Pair<Double, Double>) {
+        this.start = start
+        val startIn = fieldToIn(start)
+        startBlocked = (graph[in2D(startIn.first, startIn.second)].value == -1.0)
+    }
+
+    fun setTarget(target: Pair<Double, Double>) {
+        this.target = target
+        val targetIn = fieldToIn(target)
+        targetBlocked = (graph[in2D(targetIn.first, targetIn.second)].value == -1.0)
     }
 
     fun addFieldObstacles() {
@@ -80,8 +94,12 @@ class Graph(
 
     fun dijkstraPath(aStar: Boolean = true, straightCost: Double = 1.0, diagCost: Double = sqrt(2.0)): MutableList<Pair<Double, Double>> {
 
-        val startIn = fieldToIn(start)
-        val targetIn = fieldToIn(target)
+        var startIn = fieldToIn(start)
+        var targetIn = fieldToIn(target)
+
+        // If start or target are outside of path, rectify them
+        if (startBlocked) { startIn = findCloseReachable(startIn) }
+        if (targetBlocked) { targetIn = findCloseReachable(targetIn) }
 
         val queue = PriorityQueue<GraphCell> {
                 c1, c2 -> (c1.value + c1.heuristic).compareTo(c2.value + c2.heuristic) // Min heap comparator
@@ -165,6 +183,32 @@ class Graph(
             }
         }
         bezier.add(pts[pts.size-1].toPose())
+
+        // If path started/ended in a boundary and was rectified, add back the start and target
+        if (startBlocked) { bezier.add(start.toPose()) }
+        if (targetBlocked) { bezier.add(0, target.toPose()) }
+
         return bezier
+    }
+
+    fun findCloseReachable(p: Pair<Int, Int>): Pair<Int, Int> {
+        val directions = mutableListOf(Pair(1,0), Pair(1,1), Pair(0,1), Pair(-1,1), Pair(-1,0), Pair(-1,-1), Pair(0,-1), Pair(1,-1)) // 8 Diagonals to explore
+        var i = 1
+        while (i < dimX/2) { // Exit if an unreasonable amount of time has passed
+            for (dir in directions) {
+                val pNew = p + i * dir
+                val pFlatIn = in2D(pNew.first, pNew.second)
+
+                if ((pFlatIn < 0) or (pFlatIn >= dimX*dimY)) { // Index out of range, I don't feel like handling this properly
+                    continue
+                }
+
+                if (graph[pFlatIn].value != -1.0) { // Not on obstacle
+                    return pNew
+                }
+            }
+            i++
+        }
+        return Pair(-1, -1)
     }
 }

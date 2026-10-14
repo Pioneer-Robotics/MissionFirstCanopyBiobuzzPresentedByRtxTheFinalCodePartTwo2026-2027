@@ -67,8 +67,8 @@ class GraphTest : OpMode() {
         telemetry.update()
 
         val graph = Graph(dim, dim)
-        graph.start = Pair(120.0,120.0)
-        graph.target = Pair(230.0,230.0)
+        graph.setStart(Pair(120.0,120.0))
+        graph.setTarget(Pair(230.0,230.0))
 
         telemetry.addLine("Calculating Dijkstra")
         telemetry.update()

@@ -43,3 +43,6 @@ operator fun Pair<Int, Int>.minus(other: Pair<Int, Int>): Pair<Int, Int> {
 fun Pair<Int, Int>.toDouble(): Pair<Double, Double> {
     return Pair(this.first.toDouble(), this.second.toDouble())
 }
+operator fun Int.times(other: Pair<Int, Int>): Pair<Int, Int> {
+    return Pair(this*other.first, this*other.second)
+}
