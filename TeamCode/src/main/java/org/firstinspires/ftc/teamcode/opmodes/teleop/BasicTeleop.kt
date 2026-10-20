@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.Bot
 import org.firstinspires.ftc.teamcode.BotType
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.hardware.BatteryMonitor
+import org.firstinspires.ftc.teamcode.hardware.MecanumBase
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
@@ -17,6 +19,7 @@ class BasicTeleop : BaseOpMode(BotType.MECANUM_BOT) {
     override fun onLoop() {
         drive()
         updateDrivePower()
+        updateTelemetry()
     }
 
     private fun drive() {
@@ -42,5 +45,9 @@ class BasicTeleop : BaseOpMode(BotType.MECANUM_BOT) {
             drivePower -= 0.1
         }
         drivePower = drivePower.coerceIn(0.1, 1.0)
+    }
+
+    private fun updateTelemetry(){
+        telemetry.addData("Motor Speeds", bot.mecanumBase?.getMotorVelocities())
     }
 }

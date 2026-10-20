@@ -121,4 +121,8 @@ class MecanumBase(
     fun stop() {
         motors.values.forEach { it.power = 0.0 }
     }
+
+    fun getMotorVelocities() : List<Double> {
+        return listOf(leftFront.velocity, leftBack.velocity, rightBack.velocity, rightFront.velocity)
+    }
 }
