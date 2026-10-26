@@ -16,6 +16,8 @@ class DualFlywheel(
     private lateinit var leader: DcMotorEx
     private lateinit var follower: DcMotorEx
 
+    var useLeader = false
+
     var k = 1.0
 
     override fun init() {
@@ -39,6 +41,10 @@ class DualFlywheel(
     /** Commands the flywheel to spin at a target velocity (encoder ticks/sec). */
     fun setVelocity(ticksPerSecond: Double) {
         leader.velocity = ticksPerSecond
+    }
+
+    fun setPower(power: Double) {
+        leader.power = power
     }
 
     override fun update() {
