@@ -54,6 +54,10 @@ class DoubleFlywheelTest : OpMode() {
         velToggle.toggle(gamepad1.cross)
         flywheelToggle.toggle(gamepad1.square)
 
+        if (gamepad1.triangleWasPressed()) {
+            flywheel.toggleLeader()
+        }
+
         flywheel.update()
 
         if (flywheelToggle.state){
@@ -93,6 +97,7 @@ class DoubleFlywheelTest : OpMode() {
                 telemetry.addLine("Press DPAD_DOWN to decrease target velocity/power")
                 telemetry.addLine("Press SQUARE to start/stop flywheel")
                 telemetry.addLine("Press CROSS to switch velocity/power")
+                telemetry.addLine("Press TRIANGLE to toggle leader/follower system")
                 telemetry.addLine("Press CIRCLE (Page 2/4)")
             }
 
@@ -103,6 +108,11 @@ class DoubleFlywheelTest : OpMode() {
                     telemetry.addData("Target Velocity", targetVelocity)
                 } else {
                     telemetry.addData("Power", power)
+                }
+                if (flywheel.useLeader) {
+                    telemetry.addLine("Dual Motor System: Leader/Follower")
+                } else {
+                    telemetry.addLine("Dual Motor System: Independent")
                 }
                 telemetry.addData("Follow multiplier", flywheel.k)
                 telemetry.addData("Current 1", currents.first)

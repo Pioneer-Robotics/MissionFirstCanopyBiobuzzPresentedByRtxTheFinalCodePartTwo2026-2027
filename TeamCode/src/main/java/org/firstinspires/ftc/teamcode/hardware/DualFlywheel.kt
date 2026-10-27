@@ -16,7 +16,10 @@ class DualFlywheel(
     private lateinit var leader: DcMotorEx
     private lateinit var follower: DcMotorEx
 
-    var useLeader = false
+    var useLeader = true
+        private set
+    private var useVel = true
+    private var target = 0.0
 
     var k = 1.0
 
@@ -40,15 +43,34 @@ class DualFlywheel(
 
     /** Commands the flywheel to spin at a target velocity (encoder ticks/sec). */
     fun setVelocity(ticksPerSecond: Double) {
-        leader.velocity = ticksPerSecond
+        target = ticksPerSecond
+        if (useLeader) {
+            leader.velocity = target
+        }
+        useVel = true
     }
 
     fun setPower(power: Double) {
-        leader.power = power
+        target = power
+        if (useLeader) {
+            leader.power = power
+        }
+
+        useVel = false
     }
 
     override fun update() {
-        follower.power = leader.power * k
+        if (useLeader) {
+            follower.power = leader.power * k
+        } else {
+            if (useVel) {
+                leader.velocity = target
+                follower.velocity = target
+            } else {
+                leader.power = target
+                follower.power = target
+            }
+        }
     }
 
     fun getVelocity(): Double = leader.velocity
@@ -59,6 +81,33 @@ class DualFlywheel(
     fun getCurrents(): Pair<Double, Double> {
         val unit = CurrentUnit.AMPS
         return Pair(leader.getCurrent(unit), follower.getCurrent(unit))
+    }
+
+    fun useLeaderFollower() {
+        useLeader = true
+
+        leader.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        leader.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        follower.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        stop()
+    }
+
+    fun useIndependent() {
+        useLeader = false
+
+        leader.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        leader.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        follower.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        follower.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        stop()
+    }
+
+    fun toggleLeader() {
+        if (useLeader) {
+            useIndependent()
+        } else {
+            useLeaderFollower()
+        }
     }
 
     fun stop() {
