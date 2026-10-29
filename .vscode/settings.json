@@ -1,0 +1,9 @@
+{
+  "kotlin.languageServer.path": "kotlin-language-server",
+  "java.import.gradle.wrapper.enabled": true,
+  "files.exclude": {
+    "**/.gradle": true,
+    "**/build": true,
+    "**/.direnv": true
+  }
+}
