@@ -162,7 +162,7 @@ class Graph(
         }
         path.add(inToField(lastCellIn))
 
-        return path
+        return path.reversed().toMutableList()
     }
 
     fun pathToBezier(pts: MutableList<Pair<Double, Double>>, smoothness: Double = 0.25): MutableList<Pose> {
