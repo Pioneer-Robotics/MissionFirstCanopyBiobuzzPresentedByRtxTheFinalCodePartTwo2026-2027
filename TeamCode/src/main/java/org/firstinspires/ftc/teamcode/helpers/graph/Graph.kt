@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.helpers.graph
 
+import com.pedropathing.api.Paths
 import com.pedropathing.math.Pose
+import com.pedropathing.paths.Path
 import org.firstinspires.ftc.teamcode.biobuzz.Points
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import java.util.PriorityQueue
@@ -163,7 +165,12 @@ class Graph(
         return path
     }
 
-    fun pathToBezier(pts: MutableList<Pair<Double, Double>>): MutableList<Pose> {
+    fun pathToBezier(pts: MutableList<Pair<Double, Double>>, smoothness: Double = 0.25): MutableList<Pose> {
+        var k = smoothness
+        if (smoothness == 0.0) {
+            k = 1e-6 // It breaks if smoothness is 0.0 ¯\_(ツ)_/¯
+        }
+
         val bezier = mutableListOf<Pose>()
         val bezIn = mutableListOf<Int>()
         var d0 = pts[1] - pts[0]
@@ -182,13 +189,27 @@ class Graph(
                 }
             }
         }
+
         bezier.add(pts[pts.size-1].toPose())
 
         // If path started/ended in a boundary and was rectified, add back the start and target
         if (startBlocked) { bezier.add(start.toPose()) }
         if (targetBlocked) { bezier.add(0, target.toPose()) }
 
-        return bezier
+        val tangents = calculateTangents(bezier)
+        val pts = mutableListOf<Pose>() // Every 4 points makes up a cubic Bezier
+
+        for (i in 0..< bezier.size-1) {
+            val cur = bezier[i]
+            val next = bezier[i+1]
+            val dist = cur.distance(next)
+            pts.add(cur) // First point
+            pts.add(cur + tangents[i] * k * dist) // Control point 1
+            pts.add(next - tangents[i + 1] * k * dist) // Control point 2
+            pts.add(next) // Last point
+        }
+
+        return pts
     }
 
     fun findCloseReachable(p: Pair<Int, Int>): Pair<Int, Int> {
@@ -210,5 +231,39 @@ class Graph(
             i++
         }
         return Pair(-1, -1)
+    }
+
+    /**
+     * Takes a list of cubic bezier control points and returns a Pedro compound path
+     * Every 4 points makes up a Bézier curve
+     */
+    fun toPedroPath(path: MutableList<Pose>): Path {
+        var pedroPath = Paths.curve(path[0], path[1], path[2], path[3]).tangent()
+        for (i in 4..path.size-4 step 4) {
+            pedroPath = Paths.path(
+                pedroPath,
+                Paths.curve(path[i], path[i+1], path[i+2], path[i+3]).tangent()
+            )
+        }
+        return pedroPath
+    }
+
+    private fun calculateTangents(pts: MutableList<Pose>): MutableList<Pose> {
+        val tangents = mutableListOf<Pose>()
+        val numPoints = pts.size
+        tangents.add((pts[1] - pts[0]).unit())
+        for (i in 1..< numPoints-1) {
+            val incoming = (pts[i] - pts[i-1]).unit()
+            val outgoing = (pts[i+1] - pts[i]).unit()
+            val avg = (incoming + outgoing).unit()
+            tangents.add(avg)
+        }
+        tangents.add((pts[numPoints-1] - pts[numPoints-2]).unit())
+        return tangents
+    }
+
+    private fun Pose.unit() : Pose {
+        val length = sqrt(this.x() * this.x() + this.y() * this.y())
+        return if (length != 0.0) this / length else Pose(0.0, 0.0)
     }
 }
