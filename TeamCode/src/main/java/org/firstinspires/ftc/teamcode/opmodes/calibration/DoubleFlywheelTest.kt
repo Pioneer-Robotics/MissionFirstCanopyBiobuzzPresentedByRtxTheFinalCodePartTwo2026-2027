@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.calibration
 import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.helpers.FileLogger
 import org.firstinspires.ftc.teamcode.helpers.Toggle
@@ -34,14 +35,18 @@ class DoubleFlywheelTest : OpMode() {
 
     override fun loop() {
 
+        val t = System.nanoTime()
+
+        val speedMulti = if (gamepad1.right_bumper) 5.0 else if (gamepad1.left_bumper) 0.2 else 1.0
+
         if (gamepad1.dpadUpWasPressed()){
-            targetVelocity += 50
-            power += 0.05
+            targetVelocity += 50 * speedMulti
+            power += 0.05 * speedMulti
         }
 
         if (gamepad1.dpadDownWasPressed()){
-            targetVelocity -= 50
-            power -= 0.05
+            targetVelocity -= 50 * speedMulti
+            power -= 0.05 * speedMulti
         }
 
         if (gamepad1.crossWasPressed()) {
@@ -74,11 +79,17 @@ class DoubleFlywheelTest : OpMode() {
 
         val currents = flywheel.getCurrents()
 
-        FileLogger.info("Flywheel Velocity", "${flywheel.getVelocity()}")
+        // FileLogger.info("Flywheel Velocity", "${flywheel.getVelocity()}")
 
         if (gamepad1.circleWasPressed()) {
             telemetryPage = telemetryPage.next()
         }
+
+        val runtime = Runtime.getRuntime()
+        val memTot = runtime.totalMemory()
+        val memUsed = memTot - runtime.freeMemory()
+
+        val dt = (System.nanoTime() - t).toDouble() / 1000000.0
 
         when (telemetryPage) {
             TelemetryPage.BASIC -> {
@@ -118,6 +129,10 @@ class DoubleFlywheelTest : OpMode() {
                 telemetry.addData("Current 1", currents.first)
                 telemetry.addData("Current 2", currents.second)
 
+                telemetry.addData("Loop dt", dt)
+                telemetry.addData("Used memory", memUsed)
+                telemetry.addData("Total memory", memTot)
+
                 telemetry.addLine("Press CIRCLE (Page 3/4)")
             }
 
@@ -129,14 +144,24 @@ class DoubleFlywheelTest : OpMode() {
                 } else {
                     telemetry.addData("Power", power)
                 }
+                if (flywheel.useLeader) {
+                    telemetry.addLine("Dual Motor System: Leader/Follower")
+                } else {
+                    telemetry.addLine("Dual Motor System: Independent")
+                }
                 telemetry.addData("Follow multiplier", flywheel.k)
                 telemetry.addData("Current 1", currents.first)
                 telemetry.addData("Current 2", currents.second)
+
+                telemetry.addData("Loop dt", dt)
+                telemetry.addData("Used memory", memUsed)
+                telemetry.addData("Total memory", memTot)
 
                 telemetry.addLine("Press DPAD_UP to increase target velocity/power")
                 telemetry.addLine("Press DPAD_DOWN to decrease target velocity/power")
                 telemetry.addLine("Press SQUARE to start/stop flywheel")
                 telemetry.addLine("Press CROSS to switch velocity/power")
+                telemetry.addLine("Press TRIANGLE to toggle leader/follower system")
 
                 telemetry.addLine("Press CIRCLE (Page 4/4)")
             }
@@ -147,6 +172,8 @@ class DoubleFlywheelTest : OpMode() {
         dashboardTelemetry.addData("Velocity", flywheel.getVelocity())
         dashboardTelemetry.addData("Current 1", currents.first)
         dashboardTelemetry.addData("Current 2", currents.second)
+        dashboardTelemetry.addData("Loop dt", dt)
+        dashboardTelemetry.addData("Used memory", memUsed)
         dashboardTelemetry.update()
     }
 
