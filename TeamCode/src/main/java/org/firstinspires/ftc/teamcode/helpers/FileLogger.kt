@@ -91,6 +91,7 @@ object FileLogger {
     }
 
     private fun openWriter(): BufferedWriter {
+        dir.mkdirs()
         val file = file(0)
         size = file.length()
         return FileOutputStream(file, true).bufferedWriter().also { out = it }

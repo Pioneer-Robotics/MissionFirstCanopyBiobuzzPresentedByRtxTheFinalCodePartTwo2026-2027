@@ -131,6 +131,17 @@ class FileLoggerTest {
     }
 
     @Test
+    fun recreatesDeletedLogDir() {
+        FileLogger.info("t", "before")
+        FileLogger.clearLogs()
+        assertTrue(logDir.deleteRecursively())
+
+        FileLogger.info("t", "after")
+        FileLogger.flush()
+        assertEquals(listOf("after"), messages(readLines(), "t"))
+    }
+
+    @Test
     fun heapFloorStaysFlat() {
         val runtime = Runtime.getRuntime()
         fun settledUsed(): Long {
