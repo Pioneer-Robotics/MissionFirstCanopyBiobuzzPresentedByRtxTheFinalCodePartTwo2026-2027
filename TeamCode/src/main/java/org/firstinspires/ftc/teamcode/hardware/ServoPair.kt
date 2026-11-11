@@ -24,7 +24,7 @@ class ServoPair(
 
         set(value) {
             servo1.position = value
-            servo2.position = value * if (reversed) -1 else 1
+            servo2.position = if (reversed) 1.0-value else value
         }
 
     override fun init() {
