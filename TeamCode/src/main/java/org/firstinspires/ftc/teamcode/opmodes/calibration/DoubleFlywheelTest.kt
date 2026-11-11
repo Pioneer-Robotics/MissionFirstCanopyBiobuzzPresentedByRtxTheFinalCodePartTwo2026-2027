@@ -79,7 +79,7 @@ class DoubleFlywheelTest : OpMode() {
 
         val currents = flywheel.getCurrents()
 
-        // FileLogger.info("Flywheel Velocity", "${flywheel.getVelocity()}")
+        FileLogger.info("Flywheel Velocity", "${flywheel.getVelocity()}")
 
         if (gamepad1.circleWasPressed()) {
             telemetryPage = telemetryPage.next()
