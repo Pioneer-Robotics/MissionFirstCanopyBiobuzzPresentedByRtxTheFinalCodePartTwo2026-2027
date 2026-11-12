@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.calibration
 import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.helpers.FileLogger
@@ -28,6 +29,10 @@ class DoubleFlywheelTest : OpMode() {
     }
 
     var telemetryPage = TelemetryPage.BASIC
+
+    val timer = ElapsedTime()
+    var spinupTime = 0.0
+    var launched = false
 
     override fun init() {
         flywheel = DualFlywheel(hardwareMap, "motor1", "motor2").apply{init()}
@@ -91,6 +96,16 @@ class DoubleFlywheelTest : OpMode() {
 
         val dt = (System.nanoTime() - t).toDouble() / 1000000.0
 
+        if (flywheel.getVelocity() < targetVelocity - 70) {
+            launched = true
+            timer.reset()
+        }
+
+        if (flywheel.getVelocity() > targetVelocity && launched) {
+            spinupTime = timer.milliseconds()
+            launched = false
+        }
+
         when (telemetryPage) {
             TelemetryPage.BASIC -> {
                 telemetry.addData("Running", flywheelToggle.state)
@@ -115,6 +130,7 @@ class DoubleFlywheelTest : OpMode() {
             TelemetryPage.INFO -> {
                 telemetry.addData("Running", flywheelToggle.state)
                 telemetry.addData("Velocity", flywheel.getVelocity())
+                telemetry.addData("Spinup Time", spinupTime)
                 if (velToggle.state) {
                     telemetry.addData("Target Velocity", targetVelocity)
                 } else {
@@ -139,6 +155,7 @@ class DoubleFlywheelTest : OpMode() {
             TelemetryPage.ALL -> {
                 telemetry.addData("Running", flywheelToggle.state)
                 telemetry.addData("Velocity", flywheel.getVelocity())
+                telemetry.addData("Spinup Time", spinupTime)
                 if (velToggle.state) {
                     telemetry.addData("Target Velocity", targetVelocity)
                 } else {

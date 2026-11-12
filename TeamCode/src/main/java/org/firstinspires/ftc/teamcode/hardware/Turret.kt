@@ -49,4 +49,9 @@ class Turret(
         val turretAngle = (atan2(dy, dx) - robotPose.theta)*360.0/2.0/PI
         gotoAngle(turretAngle)
     }
+
+    fun aimAtHive(robotPose: Pose) {
+        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        aimAtPos(robotPose, target)
+    }
 }
