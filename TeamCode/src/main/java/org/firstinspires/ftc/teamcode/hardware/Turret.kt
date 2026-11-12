@@ -54,4 +54,25 @@ class Turret(
         val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
         aimAtPos(robotPose, target)
     }
+
+    // Very basic, assumes a constant flight time of 0.6 seconds
+    // (not unreasonable given farther shot = higher power and faster ball).
+    fun aimAtHiveMoving(robotPose: Pose) {
+        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val dx = target.x - robotPose.x
+        val dy = target.y - robotPose.y
+
+        val vel = Pose(robotPose.vx, robotPose.vy)
+
+        val tangent = Pose(-dy, dx).normalize() // Direction of bot necessitating an angle change
+        val velProj = vel.proj(tangent) // Effective velocity of the robot that matters for turret angle
+
+        val flightTime = 0.6
+
+        // After its flight, the robot's velocity will mess up the position of the ball by this much
+        val flightDisplacement = velProj * flightTime
+        val effTarget = target - flightDisplacement
+
+        aimAtPos(effTarget, robotPose)
+    }
 }

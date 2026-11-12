@@ -97,6 +97,19 @@ data class Pose(
         )
     }
 
+    fun dot(
+        other: Pose
+    ): Double {
+        return this.x*other.x + this.y*other.y
+    }
+
+    // Project this vector ONTO a given vector, not other way around
+    fun proj(
+        onto: Pose
+    ): Pose {
+        return onto * (this.dot(onto) / onto.dot(onto))
+    }
+
     // Minimal linear ops (θ wrapped)
     operator fun plus(o: Pose): Pose =
         copy(
