@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.helpers.Pose
 import kotlin.math.abs
 
 class DualFlywheel(
@@ -113,5 +114,40 @@ class DualFlywheel(
     fun stop() {
         leader.power = 0.0
         follower.power = 0.0
+    }
+
+    fun distToVel(dist: Double): Double {
+        return 2150.0 // TODO: Create regression for velocity
+    }
+
+    fun shootAtHive(robotPose: Pose) {
+        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val dist = (target - robotPose).getLength()
+        val velocity = distToVel(dist)
+
+        setVelocity(velocity)
+    }
+
+    // Very basic, assumes a constant flight time of 0.6 seconds
+    // (not unreasonable given farther shot = higher power and faster ball).
+    fun shootAtHiveMoving(robotPose: Pose) {
+        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val dx = target.x - robotPose.x
+        val dy = target.y - robotPose.y
+
+        val robotVel = Pose(robotPose.vx, robotPose.vy)
+        val parDir = Pose(dx, dy).normalize()
+        val velPar = robotVel.proj(parDir) // Effective velocity of the robot that matters for flywheel speed
+
+        val flightTime = 0.6
+
+        // After its flight, the robot's velocity will mess up the position of the ball by this much
+        val flightDisplacement = velPar * flightTime
+        val effTarget = target - flightDisplacement
+
+        val dist = (effTarget - robotPose).getLength()
+        val velocity = distToVel(dist)
+
+        setVelocity(velocity)
     }
 }

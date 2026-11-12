@@ -62,15 +62,15 @@ class Turret(
         val dx = target.x - robotPose.x
         val dy = target.y - robotPose.y
 
-        val vel = Pose(robotPose.vx, robotPose.vy)
+        val robotVel = Pose(robotPose.vx, robotPose.vy)
 
-        val tangent = Pose(-dy, dx).normalize() // Direction of bot necessitating an angle change
-        val velProj = vel.proj(tangent) // Effective velocity of the robot that matters for turret angle
+        val perpDir = Pose(-dy, dx).normalize() // Direction of bot necessitating an angle change
+        val velPerp = robotVel.proj(perpDir) // Effective velocity of the robot that matters for turret angle
 
         val flightTime = 0.6
 
         // After its flight, the robot's velocity will mess up the position of the ball by this much
-        val flightDisplacement = velProj * flightTime
+        val flightDisplacement = velPerp * flightTime
         val effTarget = target - flightDisplacement
 
         aimAtPos(effTarget, robotPose)
