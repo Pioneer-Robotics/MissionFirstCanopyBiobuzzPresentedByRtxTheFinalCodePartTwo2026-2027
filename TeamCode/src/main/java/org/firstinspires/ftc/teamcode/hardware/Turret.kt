@@ -8,20 +8,25 @@ import kotlin.math.atan2
 class Turret(
     private val hardwareMap: HardwareMap,
     private val servo1Name: String = "servo1",
-    private val servo2Name: String = "servo2"
+    private val servo2Name: String = "servo2",
+    private val encoderName: String = "turretEncoder"
 ) : HardwareComponent {
 
     private lateinit var servoPair: ServoPair
 
     private val minAngleDeg = 0.0
-    private val maxAngleDeg = 320.0
+    private val maxAngleDeg = 360.0
 
     override fun init() {
-        servoPair = ServoPair(hardwareMap, servo1Name, servo2Name, true).apply { init() }
+        servoPair = ServoPair(hardwareMap, servo1Name, servo2Name, encoderName, true).apply { init() }
+    }
+
+    override fun update(dt: Double) {
+        servoPair.update(dt)
     }
 
     fun gotoPosition(position: Double) {
-        servoPair.position = position
+        servoPair.setPosition(position)
     }
 
     fun gotoAngle(angleDeg: Double) {

@@ -68,7 +68,7 @@ class DoubleFlywheelTest : OpMode() {
             flywheel.toggleLeader()
         }
 
-        flywheel.update()
+        flywheel.update(-1.0)
 
         if (flywheelToggle.state){
             if (velToggle.state) {

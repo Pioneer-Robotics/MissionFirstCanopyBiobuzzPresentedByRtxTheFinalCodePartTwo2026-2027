@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Turret
+import org.firstinspires.ftc.teamcode.helpers.Chrono
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import kotlin.math.PI
@@ -28,6 +29,7 @@ class TurretTest : OpMode() {
     var lastTouchX = 0.0
     var lastTouchY = 0.0
     val poseToggle = Toggle(true)
+    val chrono = Chrono(false)
 
     private lateinit var turret: Turret
 
@@ -40,6 +42,9 @@ class TurretTest : OpMode() {
     }
 
     override fun loop() {
+        chrono.update()
+        turret.update(chrono.dt)
+
         poseToggle.toggle(gamepad1.circle)
         updatePointFromTouchpad()
 
