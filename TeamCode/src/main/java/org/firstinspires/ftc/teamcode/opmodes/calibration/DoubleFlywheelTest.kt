@@ -82,7 +82,7 @@ class DoubleFlywheelTest : OpMode() {
             transfer.setPower(0.0)
         }
 
-        flywheel.update()
+        flywheel.update(-1.0)
 
         if (flywheelToggle.state){
             if (velToggle.state) {
