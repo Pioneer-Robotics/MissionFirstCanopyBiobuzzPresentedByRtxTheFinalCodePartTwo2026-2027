@@ -60,7 +60,7 @@ class DualFlywheel(
         useVel = false
     }
 
-    override fun update() {
+    override fun update(dt: Double) {
         if (useLeader) {
             follower.power = leader.power * k
         } else {

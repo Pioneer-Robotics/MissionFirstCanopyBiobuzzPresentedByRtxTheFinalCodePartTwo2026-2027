@@ -41,6 +41,9 @@ abstract class BaseOpMode(val botType: BotType) : OpMode() {
     val elapsedTime: Double
         get() = runTimer.seconds()
 
+    var prevTime = 0.0
+    var dt = 0.0
+
     val allHubs: List<LynxModule> by lazy {
         hardwareMap.getAll(LynxModule::class.java)
     }
@@ -72,8 +75,9 @@ abstract class BaseOpMode(val botType: BotType) : OpMode() {
         for (hub in allHubs) {
             hub.clearBulkCache()
         }
+
         // Update bot systems
-        bot.updateAll()
+        bot.updateAll(dt)
 
         // Call user-defined loop logic
         onLoop()
@@ -85,6 +89,10 @@ abstract class BaseOpMode(val botType: BotType) : OpMode() {
 
         // Automatically handle telemetry updates
         updateTelemetry()
+
+        val cur = runTimer.milliseconds()
+        dt = cur - prevTime
+        prevTime = cur
     }
 
     final override fun stop() {

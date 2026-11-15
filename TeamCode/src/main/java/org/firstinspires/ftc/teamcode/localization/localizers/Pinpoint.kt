@@ -43,7 +43,7 @@ class Pinpoint(
         pinpoint.update()
     }
 
-    override fun update() {
+    override fun update(dt: Double) {
         pinpoint.update()
 
         // Coordinate conversion: robot_x = -pinpoint_y, robot_y = pinpoint_x

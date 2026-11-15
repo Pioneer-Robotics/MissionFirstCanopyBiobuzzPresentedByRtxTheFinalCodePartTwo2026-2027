@@ -79,8 +79,8 @@ class Bot private constructor(
         usePioneerFollower = false
     }
 
-    fun updateAll() {
-        hardwareComponents.values.forEach { it.update() }
+    fun updateAll(dt: Double) {
+        hardwareComponents.values.forEach { it.update(dt) }
     }
 
     // Companion for builder and fromType
