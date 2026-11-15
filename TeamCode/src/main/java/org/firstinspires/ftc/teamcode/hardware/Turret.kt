@@ -30,7 +30,6 @@ class Turret(
     }
 
     fun gotoAngle(angleDeg: Double) {
-
         val modAngle = (angleDeg.mod(360.0)).coerceIn(minAngleDeg, maxAngleDeg)
 
         // Convert to servo position 0 to 1

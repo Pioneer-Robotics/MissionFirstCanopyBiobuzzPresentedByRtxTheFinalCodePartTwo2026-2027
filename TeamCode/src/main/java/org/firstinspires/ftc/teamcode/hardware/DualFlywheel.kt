@@ -76,7 +76,7 @@ class DualFlywheel(
 
     fun getVelocity(): Double = leader.velocity
 
-    fun isAtVelocity(target: Double, toleranceTicksPerSec: Double = 50.0): Boolean =
+    fun isAtVelocity(toleranceTicksPerSec: Double = 50.0): Boolean =
         abs(leader.velocity - target) <= toleranceTicksPerSec
 
     fun getCurrents(): Pair<Double, Double> {
@@ -116,13 +116,13 @@ class DualFlywheel(
         follower.power = 0.0
     }
 
-    fun distToVel(dist: Double): Double {
+    private fun distToVel(dist: Double): Double {
         return 2150.0 // TODO: Create regression for velocity
     }
 
     fun shootAtHive(robotPose: Pose) {
         val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
-        val dist = (target - robotPose).getLength()
+        val dist = robotPose.distanceTo(target)
         val velocity = distToVel(dist)
 
         setVelocity(velocity)

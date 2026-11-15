@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.helpers
 
-import com.pedropathing.algorithm.ForesightConfig
 import com.pedropathing.ivy.Command
 import com.pedropathing.ivy.commands.Commands.instant
 import com.pedropathing.ivy.groups.Groups.sequential
@@ -22,4 +21,8 @@ fun Command.withMaxVelocity(velocity: Double): Command {
         this,
         instant { Constants.foresightConfig.maxVelocityConstraint.set(prevVelocityConstraint) }
     )
+}
+
+fun com.pedropathing.math.Pose.toPioneerPose(): Pose {
+    return Pose(this.x(), this.y(), this.heading())
 }
