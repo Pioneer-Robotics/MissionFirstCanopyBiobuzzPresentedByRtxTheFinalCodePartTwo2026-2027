@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
+import org.firstinspires.ftc.teamcode.hardware.Transfer
 import org.firstinspires.ftc.teamcode.helpers.FileLogger
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.helpers.next
@@ -14,12 +15,15 @@ import org.firstinspires.ftc.teamcode.helpers.next
 class DoubleFlywheelTest : OpMode() {
 
     private lateinit var flywheel: DualFlywheel
+    private lateinit var transfer: Transfer
+
     val dashboardTelemetry = FtcDashboard.getInstance().telemetry
     var targetVelocity = 0.0
     var power = 0.0
 
     var flywheelToggle: Toggle = Toggle(false)
     var velToggle: Toggle = Toggle(true)
+    var transferToggle: Toggle = Toggle(false)
 
     enum class TelemetryPage {
         BASIC,
@@ -35,7 +39,8 @@ class DoubleFlywheelTest : OpMode() {
     var launched = false
 
     override fun init() {
-        flywheel = DualFlywheel(hardwareMap, "motor1", "motor2").apply{init()}
+        flywheel = DualFlywheel(hardwareMap, "motor1", "motor2").apply{ init() }
+        transfer = Transfer(hardwareMap, "transferMotor").apply{ init() }
     }
 
     override fun loop() {
@@ -66,6 +71,15 @@ class DoubleFlywheelTest : OpMode() {
 
         if (gamepad1.triangleWasPressed()) {
             flywheel.toggleLeader()
+        }
+
+        transferToggle.toggle(gamepad1.dpadRightWasPressed())
+
+        val transferPower = if (gamepad1.dpad_left) -1.0 else 1.0
+        if (transferToggle.state) {
+            transfer.setPower(transferPower)
+        } else {
+            transfer.setPower(0.0)
         }
 
         flywheel.update()
@@ -130,6 +144,7 @@ class DoubleFlywheelTest : OpMode() {
             TelemetryPage.INFO -> {
                 telemetry.addData("Running", flywheelToggle.state)
                 telemetry.addData("Velocity", flywheel.getVelocity())
+                telemetry.addData("Transfer Power", transfer.getPower())
                 telemetry.addData("Spinup Time", spinupTime)
                 if (velToggle.state) {
                     telemetry.addData("Target Velocity", targetVelocity)
@@ -155,6 +170,7 @@ class DoubleFlywheelTest : OpMode() {
             TelemetryPage.ALL -> {
                 telemetry.addData("Running", flywheelToggle.state)
                 telemetry.addData("Velocity", flywheel.getVelocity())
+                telemetry.addData("Transfer Power", transfer.getPower())
                 telemetry.addData("Spinup Time", spinupTime)
                 if (velToggle.state) {
                     telemetry.addData("Target Velocity", targetVelocity)

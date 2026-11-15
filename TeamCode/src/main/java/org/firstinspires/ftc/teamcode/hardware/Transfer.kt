@@ -23,4 +23,8 @@ class Transfer(
     fun setPower(power: Double) {
         motor.power = power
     }
+
+    fun getPower(): Double {
+        return motor.power
+    }
 }
