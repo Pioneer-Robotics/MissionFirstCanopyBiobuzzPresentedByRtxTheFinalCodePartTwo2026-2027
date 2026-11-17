@@ -6,14 +6,16 @@ import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.helpers.Toggle
+import org.firstinspires.ftc.teamcode.opmodes.teleop.Teleop
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
 class TeleopDriver1(
-    var gamepad: Gamepad,
-    val bot: Bot,
+    private val gamepad: Gamepad,
+    private val bot: Bot,
+    private val teleop: Teleop
 ) {
     var drivePower = Constants.Drive.DEFAULT_POWER
     val fieldCentric: Boolean
@@ -29,6 +31,8 @@ class TeleopDriver1(
         drive()
         updateDrivePower()
         updateFieldCentric()
+        handleIntakeTransfer()
+        handleResetOdo()
     }
 
     private fun drive() {
@@ -68,5 +72,24 @@ class TeleopDriver1(
 
     private fun updateFieldCentric() {
         fieldCentricToggle.toggle(gamepad.touchpad)
+    }
+
+    private fun handleIntakeTransfer() {
+        intakeToggle.toggle(gamepad.dpad_up)
+        var intakePow = if (gamepad.dpad_down) -1.0 else 1.0
+        intakePow *= if (intakeToggle.state) 1.0 else 0.0
+
+        bot.intake?.setPower(intakePow)
+        if (!teleop.shooting) { // Allow shooting to override use of transfer
+            bot.transfer?.setPower(intakePow)
+        }
+
+        teleop.intaking = intakeToggle.state
+    }
+
+    private fun handleResetOdo() {
+        if (gamepad.right_trigger > 0.5 && gamepad.left_trigger > 0.5) {
+            bot.pinpoint?.reset(Constants.Misc.RESET_POSE)
+        }
     }
 }

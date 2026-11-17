@@ -29,4 +29,6 @@ object Points {
     val ORIGIN = Pose(0.0, 0.0)
     val LOW_HIVE = Pose(140.0, 140.0)
     val HIGH_HIVE = Pose(140.0, 220.0)
+
+    val BOTTOM_LEFT_REACHABLE = Pose(30.0, 30.0)
 }

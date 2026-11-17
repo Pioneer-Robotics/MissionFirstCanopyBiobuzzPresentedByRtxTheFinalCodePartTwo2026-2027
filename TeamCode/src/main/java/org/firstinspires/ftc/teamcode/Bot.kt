@@ -4,9 +4,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.hardware.BatteryMonitor
 import org.firstinspires.ftc.teamcode.hardware.Camera
+import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
+import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.LED
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
+import org.firstinspires.ftc.teamcode.hardware.ReleaseServo
+import org.firstinspires.ftc.teamcode.hardware.Transfer
+import org.firstinspires.ftc.teamcode.hardware.Turret
 import org.firstinspires.ftc.teamcode.localization.localizers.Pinpoint
 import org.firstinspires.ftc.teamcode.pioneerPathing.follower.Follower
 import org.firstinspires.ftc.teamcode.vision.AprilTag
@@ -48,6 +53,12 @@ class Bot private constructor(
     val camera get() = get<Camera>()
     val batteryMonitor get() = get<BatteryMonitor>()
     val led get() = get<LED>()
+
+    val turret get() = get<Turret>()
+    val flywheel get() = get<DualFlywheel>()
+    val intake get() = get<Intake>()
+    val transfer get() = get<Transfer>()
+    val releaseServo get() = get<ReleaseServo>()
 
     // Follower is lazily initialized (only if accessed)
     // and will error if localizer or mecanumBase is missing
@@ -105,6 +116,11 @@ class Bot private constructor(
                         .add(LED(hardwareMap))
                         .add(Camera(hardwareMap, processors = arrayOf(AprilTag().processor)))
                         .add(BatteryMonitor(hardwareMap))
+                        .add(Turret(hardwareMap))
+                        .add(DualFlywheel(hardwareMap))
+                        .add(Intake(hardwareMap))
+                        .add(Transfer(hardwareMap))
+                        .add(ReleaseServo(hardwareMap))
                         .build()
                 BotType.CUSTOM -> throw IllegalArgumentException("Use Bot.builder() to create a custom bot")
             }

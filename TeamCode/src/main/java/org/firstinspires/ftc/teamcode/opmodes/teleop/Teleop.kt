@@ -19,9 +19,12 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private val allianceToggle = Toggle(false)
     private var changedAllianceColor = false
 
+    var intaking = false
+    var shooting = false
+
     override fun onInit() {
-        driver1 = TeleopDriver1(gamepad1, bot)
-        driver2 = TeleopDriver2(gamepad2, bot)
+        driver1 = TeleopDriver1(gamepad1, bot, this)
+        driver2 = TeleopDriver2(gamepad2, bot, this)
     }
 
     override fun onInitLoop() {
@@ -58,7 +61,6 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     }
 
     private fun addTelemetryData() {
-        addTelemetryData("Alliance Color", bot.allianceColor, Verbose.INFO)
         addTelemetryData("Drive Power", driver1.drivePower, Verbose.INFO)
         addTelemetryData("Pose", bot.pinpoint!!.pose, Verbose.DEBUG)
 

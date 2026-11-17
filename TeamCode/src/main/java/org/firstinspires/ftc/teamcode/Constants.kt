@@ -5,6 +5,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcode.biobuzz.Points
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode.Verbose
@@ -214,5 +215,6 @@ object Constants {
 
     object Misc {
         val VERBOSE_LEVEL = Verbose.DEBUG
+        val RESET_POSE = Points.BOTTOM_LEFT_REACHABLE
     }
 }
