@@ -62,11 +62,11 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     }
 
     private fun handleTransfer(){
-        transferState = if (driver1.requestTransferOn || driver2.requestTransferOn) true else false
+        transferState = driver1.requestTransferOn || driver2.requestTransferOn
         var transferPow = if (driver1.reverseTransfer) -1.0 else 1.0
         transferPow *= if (transferState) 1.0 else 0.0
 
-        bot.intake?.setPower(transferPow)
+        bot.transfer?.setPower(transferPow)
     }
 
 

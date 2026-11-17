@@ -12,12 +12,19 @@ class TeleopDriver2(
 ) {
 
     var requestTransferOn = false
+    var autoTrack = Toggle(true)
+    var autoFlywheel = Toggle(true)
+    var defaultFlyVel = 2150.0
 
     fun onStart() {
     }
 
     fun update() {
         handleShoot()
+        handleAutoTrack()
+        handleManualTrack()
+        handleAutoFlywheel()
+        handleManualFlywheel()
     }
 
     fun handleShoot() {
@@ -29,6 +36,41 @@ class TeleopDriver2(
             bot.releaseServo?.close()
             requestTransferOn = false
 
+        }
+    }
+
+    fun handleAutoTrack() {
+        autoTrack.toggle(gamepad.touchpad)
+
+        if (autoTrack.state) {
+            bot.turret?.aimAtHive(bot.pinpoint?.pose!!)
+        }
+    }
+
+    fun handleManualTrack() {
+        if (!autoTrack.state) {
+            val ang = bot.turret?.getAngle()!!
+            val change = gamepad.right_trigger - gamepad.left_trigger
+            bot.turret?.gotoAngle(ang + change)
+        }
+    }
+
+    fun handleAutoFlywheel() {
+        autoFlywheel.toggle(gamepad.cross)
+
+        if (autoFlywheel.state) {
+            bot.flywheel?.shootAtHive(bot.pinpoint?.pose!!)
+        }
+    }
+
+    fun handleManualFlywheel() {
+        if (!autoFlywheel.state) {
+            if (gamepad.dpadUpWasPressed()) {
+                defaultFlyVel += 50.0
+            } else if (gamepad.dpadDownWasPressed()) {
+                defaultFlyVel -= 50.0
+            }
+            bot.flywheel?.setVelocity(defaultFlyVel)
         }
     }
 }
