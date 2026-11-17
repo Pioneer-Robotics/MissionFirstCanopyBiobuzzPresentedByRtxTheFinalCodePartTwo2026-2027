@@ -35,7 +35,7 @@ class AprilTag(
     private val library: AprilTagLibrary =
         AprilTagLibrary
             .Builder()
-            .addTags(AprilTagGameDatabase.getCurrentGameTagLibrary())
+            .addLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
             .build()
 
     override val processor: AprilTagProcessor =
