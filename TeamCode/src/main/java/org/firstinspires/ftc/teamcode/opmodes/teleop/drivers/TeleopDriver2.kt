@@ -11,24 +11,24 @@ class TeleopDriver2(
     private val teleop: Teleop
 ) {
 
+    var requestTransferOn = false
+
     fun onStart() {
     }
 
     fun update() {
+        handleShoot()
     }
 
     fun handleShoot() {
         if (gamepad.right_bumper) {
             bot.releaseServo?.open()
-            bot.transfer?.setPower(1.0) // Always move transfer when shooting
-            teleop.shooting = true
+            requestTransferOn = true
+
         } else {
             bot.releaseServo?.close()
-            teleop.shooting = false
+            requestTransferOn = false
 
-            if (!teleop.intaking) { // When we aren't shooting, only stop transfer if we aren't intaking
-                bot.transfer?.setPower(0.0)
-            }
         }
     }
 }

@@ -20,6 +20,11 @@ class TeleopDriver1(
     var drivePower = Constants.Drive.DEFAULT_POWER
     val fieldCentric: Boolean
         get() = fieldCentricToggle.state
+    var reverseIntake = false
+    var reverseTransfer = false
+    var requestTransferOn = false
+    var autoStopIntake = false
+    var intakeState = false
 
     // Toggles
     private var incDrivePower: Toggle = Toggle(false)
@@ -75,16 +80,42 @@ class TeleopDriver1(
     }
 
     private fun handleIntakeTransfer() {
-        intakeToggle.toggle(gamepad.dpad_up)
-        var intakePow = if (gamepad.dpad_down) -1.0 else 1.0
-        intakePow *= if (intakeToggle.state) 1.0 else 0.0
+        //Basic on/off
+        if (gamepad.left_bumper){
+            intakeState = true
+            requestTransferOn = true
+        } else {
+            intakeState = false
+            requestTransferOn = false
+        }
+        //Auto stop intake
+        if (teleop.storageFull.justChanged){
 
-        bot.intake?.setPower(intakePow)
-        if (!teleop.shooting) { // Allow shooting to override use of transfer
-            bot.transfer?.setPower(intakePow)
+            autoStopIntake = if (teleop.storageFull.state) true else false
         }
 
-        teleop.intaking = intakeToggle.state
+        if (autoStopIntake){
+            intakeState = false
+            if (gamepad.leftBumperWasReleased()){
+                autoStopIntake = false
+            }
+        }
+        //All reverse controls
+        if (gamepad.dpad_up){
+            reverseTransfer = true
+            reverseIntake = true
+        } else if (gamepad.dpad_down){
+            reverseIntake = true
+        } else {
+            reverseIntake = false
+            reverseTransfer = false
+        }
+        //Talk to intake hardware
+        var intakePow = if (reverseIntake) -1.0 else 1.0
+        intakePow *= if (intakeState) 1.0 else 0.0
+
+        bot.intake?.setPower(intakePow)
+
     }
 
     private fun handleResetOdo() {

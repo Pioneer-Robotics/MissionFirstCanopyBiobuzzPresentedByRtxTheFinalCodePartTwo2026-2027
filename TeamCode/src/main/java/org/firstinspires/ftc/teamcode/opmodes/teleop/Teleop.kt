@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.Bot
 import org.firstinspires.ftc.teamcode.BotType
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.general.AllianceColor
@@ -19,8 +18,8 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private val allianceToggle = Toggle(false)
     private var changedAllianceColor = false
 
-    var intaking = false
-    var shooting = false
+    var transferState = false
+    var storageFull = Toggle(false)
 
     override fun onInit() {
         driver1 = TeleopDriver1(gamepad1, bot, this)
@@ -56,9 +55,20 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
         driver1.update()
         driver2.update()
 
+        handleTransfer()
+
         // Add telemetry data
         addTelemetryData()
     }
+
+    private fun handleTransfer(){
+        transferState = if (driver1.requestTransferOn || driver2.requestTransferOn) true else false
+        var transferPow = if (driver1.reverseTransfer) -1.0 else 1.0
+        transferPow *= if (transferState) 1.0 else 0.0
+
+        bot.intake?.setPower(transferPow)
+    }
+
 
     private fun addTelemetryData() {
         addTelemetryData("Drive Power", driver1.drivePower, Verbose.INFO)
