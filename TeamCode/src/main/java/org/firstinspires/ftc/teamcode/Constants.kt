@@ -24,6 +24,8 @@ object Constants {
         const val INTAKE = "intake"
         const val TRANSFER = "transfer"
 
+        const val TURRET_ENCODER = "turretEncoder"
+
         // Odometry
         const val ODO_LEFT = "odoLeft"
         const val ODO_RIGHT = "odoRight"
@@ -33,6 +35,9 @@ object Constants {
         const val PINPOINT = "pinpoint"
 
         // Servos
+        const val RELEASE_SERVO = "releaseServo"
+        const val TURRET_SERVO_1 = "turretServo1"
+        const val TURRET_SERVO_2 = "turretServo2"
 
         // Other
         const val WEBCAM = "Webcam 1"
@@ -174,11 +179,18 @@ object Constants {
 
     @Config
     object Turret {
+        // Turret PID
+        const val kP = 0.0001
+        const val kI = 0.0
+        const val kD = 0.0
 
+        const val MIN_ANGLE_DEG = 0.0
+        const val MAX_ANGLE_DEG = 360.0
     }
 
     object ServoPositions {
-
+        const val RELEASE_OPEN = 1.0
+        const val RELEASE_CLOSE = 0.0
     }
 
     object TransferData {

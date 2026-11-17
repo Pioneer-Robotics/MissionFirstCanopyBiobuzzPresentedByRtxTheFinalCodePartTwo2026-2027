@@ -1,24 +1,29 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.biobuzz.Points
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import kotlin.math.PI
 import kotlin.math.atan2
 
 class Turret(
     private val hardwareMap: HardwareMap,
-    private val servo1Name: String = "servo1",
-    private val servo2Name: String = "servo2",
-    private val encoderName: String = "turretEncoder"
+    private val servo1Name: String = Constants.HardwareNames.TURRET_SERVO_1,
+    private val servo2Name: String = Constants.HardwareNames.TURRET_SERVO_2,
+    private val encoderName: String = Constants.HardwareNames.TURRET_ENCODER
 ) : HardwareComponent {
 
-    private lateinit var servoPair: ServoPair
+    private lateinit var servoPair: CRServoPair
 
-    private val minAngleDeg = 0.0
-    private val maxAngleDeg = 360.0
+    val T = Constants.Turret
+
+    private val minAngleDeg = T.MIN_ANGLE_DEG
+    private val maxAngleDeg = T.MAX_ANGLE_DEG
 
     override fun init() {
-        servoPair = ServoPair(hardwareMap, servo1Name, servo2Name, encoderName, true).apply { init() }
+        servoPair = CRServoPair(hardwareMap, servo1Name, servo2Name, encoderName, true,
+            pidConstants = arrayOf(T.kP, T.kI, T.kD)).apply { init() }
     }
 
     override fun update(dt: Double) {
@@ -55,14 +60,14 @@ class Turret(
     }
 
     fun aimAtHive(robotPose: Pose) {
-        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val target = if (robotPose.y < 180) Points.LOW_HIVE else Points.HIGH_HIVE
         aimAtPos(robotPose, target)
     }
 
     // Very basic, assumes a constant flight time of 0.6 seconds
     // (not unreasonable given farther shot = higher power and faster ball).
     fun aimAtHiveMoving(robotPose: Pose) {
-        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val target = if (robotPose.y < 180) Points.LOW_HIVE else Points.HIGH_HIVE
         val dx = target.x - robotPose.x
         val dy = target.y - robotPose.y
 

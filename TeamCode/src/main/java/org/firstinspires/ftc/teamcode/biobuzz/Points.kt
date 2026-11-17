@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.helpers.Pose
                 |               ^               |
                 |               |               |
                 |               |               |
-BLUE ALLIANCE   |               0----> +X       |    RED ALLIANCE
+BLUE ALLIANCE   |                ----> +X       |    RED ALLIANCE
                 |                               |
                 |                               |
                 |                               |
@@ -19,21 +19,14 @@ BLUE ALLIANCE   |               0----> +X       |    RED ALLIANCE
 
                             AUDIENCE SIDE
 
-    THETA = 0 FACING FORWARD
+    THETA = 0 FACING RIGHT, BOTTOM LEFT IS (0,0)
 */
 
-// All points are defined from the RED ALLIANCE perspective
-class Points(
-    val color: AllianceColor,
-) {
-    // Function to transform a point based on alliance color
-    fun Pose.T(c: AllianceColor): Pose =
-        when (c) {
-            AllianceColor.RED -> this
-            AllianceColor.BLUE -> Pose(-this.x, this.y, theta=-this.theta)
-            AllianceColor.NEUTRAL -> this
-        }
+// This game is symmetrical, the points are from the current alliance's perspective
+object Points {
 
     // Key positions on the field
-    val ORIGIN = Pose(0.0, 0.0, 0.0)
+    val ORIGIN = Pose(0.0, 0.0)
+    val LOW_HIVE = Pose(140.0, 140.0)
+    val HIGH_HIVE = Pose(140.0, 220.0)
 }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.biobuzz.Points
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import kotlin.math.abs
 
@@ -121,7 +122,7 @@ class DualFlywheel(
     }
 
     fun shootAtHive(robotPose: Pose) {
-        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val target = if (robotPose.y < 180) Points.LOW_HIVE else Points.HIGH_HIVE
         val dist = robotPose.distanceTo(target)
         val velocity = distToVel(dist)
 
@@ -131,7 +132,7 @@ class DualFlywheel(
     // Very basic, assumes a constant flight time of 0.6 seconds
     // (not unreasonable given farther shot = higher power and faster ball).
     fun shootAtHiveMoving(robotPose: Pose) {
-        val target = if (robotPose.y < 180) Pose(140.0, 140.0) else Pose (140.0, 220.0)
+        val target = if (robotPose.y < 180) Points.LOW_HIVE else Points.HIGH_HIVE
         val dx = target.x - robotPose.x
         val dy = target.y - robotPose.y
 

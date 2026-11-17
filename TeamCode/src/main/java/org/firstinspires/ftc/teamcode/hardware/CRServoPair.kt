@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.hardware
 
-import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.helpers.PIDController
  * Call [init] before use, then set [position] to move both servos together. When [reversed]
  * is true, the second servo is driven with mirrored output for opposing linkage motion.
  */
-class ServoPair(
+class CRServoPair(
     private val hardwareMap: HardwareMap,
     private val servo1Name: String,
     private val servo2Name: String,
