@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.hardware.BatteryMonitor
 import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
+import org.firstinspires.ftc.teamcode.hardware.FlowerRamp
 import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.LED
@@ -59,6 +60,7 @@ class Bot private constructor(
     val intake get() = get<Intake>()
     val transfer get() = get<Transfer>()
     val releaseServo get() = get<ReleaseServo>()
+    val flowerRamp get() = get<FlowerRamp>()
 
     // Follower is lazily initialized (only if accessed)
     // and will error if localizer or mecanumBase is missing
@@ -121,6 +123,7 @@ class Bot private constructor(
                         .add(Intake(hardwareMap))
                         .add(Transfer(hardwareMap))
                         .add(ReleaseServo(hardwareMap))
+                        .add(FlowerRamp(hardwareMap))
                         .build()
                 BotType.CUSTOM -> throw IllegalArgumentException("Use Bot.builder() to create a custom bot")
             }

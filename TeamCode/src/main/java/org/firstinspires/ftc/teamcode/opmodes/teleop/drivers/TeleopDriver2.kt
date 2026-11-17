@@ -27,7 +27,7 @@ class TeleopDriver2(
         handleManualFlywheel()
     }
 
-    fun handleShoot() {
+    private fun handleShoot() {
         if (gamepad.right_bumper) {
             bot.releaseServo?.open()
             requestTransferOn = true
@@ -39,7 +39,7 @@ class TeleopDriver2(
         }
     }
 
-    fun handleAutoTrack() {
+    private fun handleAutoTrack() {
         autoTrack.toggle(gamepad.touchpad)
 
         if (autoTrack.state) {
@@ -47,7 +47,7 @@ class TeleopDriver2(
         }
     }
 
-    fun handleManualTrack() {
+    private fun handleManualTrack() {
         if (!autoTrack.state) {
             val ang = bot.turret?.getAngle()!!
             val change = gamepad.right_trigger - gamepad.left_trigger
@@ -55,7 +55,7 @@ class TeleopDriver2(
         }
     }
 
-    fun handleAutoFlywheel() {
+    private fun handleAutoFlywheel() {
         autoFlywheel.toggle(gamepad.cross)
 
         if (autoFlywheel.state) {
@@ -63,7 +63,7 @@ class TeleopDriver2(
         }
     }
 
-    fun handleManualFlywheel() {
+    private fun handleManualFlywheel() {
         if (!autoFlywheel.state) {
             if (gamepad.dpadUpWasPressed()) {
                 defaultFlyVel += 50.0

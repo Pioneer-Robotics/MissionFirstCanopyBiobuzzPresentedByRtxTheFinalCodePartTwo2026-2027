@@ -31,6 +31,7 @@ class TeleopDriver1(
     private var decDrivePower: Toggle = Toggle(false)
     private var fieldCentricToggle: Toggle = Toggle(false)
     private var intakeToggle: Toggle = Toggle(false)
+    private var flowerToggle: Toggle = Toggle(false)
 
     fun update() {
         drive()
@@ -38,6 +39,7 @@ class TeleopDriver1(
         updateFieldCentric()
         handleIntakeTransfer()
         handleResetOdo()
+        handleFlowerRamp()
     }
 
     private fun drive() {
@@ -121,6 +123,16 @@ class TeleopDriver1(
     private fun handleResetOdo() {
         if (gamepad.right_trigger > 0.5 && gamepad.left_trigger > 0.5) {
             bot.pinpoint?.reset(Constants.Misc.RESET_POSE)
+        }
+    }
+
+    private fun handleFlowerRamp() {
+        flowerToggle.toggle(gamepad.cross)
+
+        if (flowerToggle.state) {
+            bot.flowerRamp?.down()
+        } else {
+            bot.flowerRamp?.up()
         }
     }
 }

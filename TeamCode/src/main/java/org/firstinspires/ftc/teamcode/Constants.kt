@@ -39,6 +39,7 @@ object Constants {
         const val RELEASE_SERVO = "releaseServo"
         const val TURRET_SERVO_1 = "turretServo1"
         const val TURRET_SERVO_2 = "turretServo2"
+        const val FLOWER_SERVO = "flowerServo"
 
         // Other
         const val WEBCAM = "Webcam 1"
@@ -192,6 +193,9 @@ object Constants {
     object ServoPositions {
         const val RELEASE_OPEN = 1.0
         const val RELEASE_CLOSE = 0.0
+
+        const val FLOWER_DOWN = 0.0
+        const val FLOWER_UP = 1.0
     }
 
     object TransferData {
