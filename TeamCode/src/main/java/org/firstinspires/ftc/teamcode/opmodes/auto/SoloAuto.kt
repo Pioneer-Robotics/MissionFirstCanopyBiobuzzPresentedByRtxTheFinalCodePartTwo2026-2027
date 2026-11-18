@@ -3,17 +3,19 @@ package org.firstinspires.ftc.teamcode.opmodes.auto
 import com.pedropathing.api.Paths.*
 import com.pedropathing.api.PoseFactory
 import com.pedropathing.follower.Follower
-import com.pedropathing.paths.Path
 import com.pedropathing.ivy.Command
 import com.pedropathing.ivy.Scheduler
 import com.pedropathing.ivy.Scheduler.schedule
+import com.pedropathing.ivy.commands.Commands.conditional
 import com.pedropathing.ivy.commands.Commands.instant
 import com.pedropathing.ivy.commands.Commands.waitMs
 import com.pedropathing.ivy.groups.Groups.parallel
 import com.pedropathing.ivy.groups.Groups.sequential
 import com.pedropathing.ivy.pedro.PedroCommands.follow
+import com.pedropathing.paths.Path
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.hardware.FlowerRamp
 import org.firstinspires.ftc.teamcode.hardware.Intake
@@ -25,6 +27,10 @@ import org.firstinspires.ftc.teamcode.helpers.Chrono
 import org.firstinspires.ftc.teamcode.helpers.toPioneerPose
 import org.firstinspires.ftc.teamcode.helpers.withMaxVelocity
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
+import org.firstinspires.ftc.teamcode.vision.AprilTag
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
+import kotlin.math.abs
 
 @Autonomous(name = "Solo Auto", group = "Autonomous")
 class SoloAuto : OpMode() {
@@ -41,6 +47,12 @@ class SoloAuto : OpMode() {
     lateinit var transfer: Transfer
     lateinit var releaseServo: ReleaseServo
     lateinit var flowerRamp: FlowerRamp
+    lateinit var turretCamera: Camera
+
+    // Hive tip tracking
+    private val tippedDetections = ArrayDeque<Boolean>()
+    private val detectionWindow = 20 // Store last N sightings
+    private val minDetections = 5 // Min amount of detections required
 
     // Points
     private val start = poseFactory.of(56.0, 8.0, 180.0)
@@ -92,14 +104,18 @@ class SoloAuto : OpMode() {
             )
         ),
         // Is hive tipped?
-        if (true) {
-            shoot()
-            follow(follower, shootCloseToPark())
-        } else {
-            follow(follower, shootCloseToShootFar())
-            shoot()
-            follow(follower, shootFarToPark())
-        }
+        conditional(
+            { hiveIsTipped() },
+            sequential(
+                shoot(),
+                follow(follower, shootCloseToPark()),
+            ),
+            sequential(
+                follow(follower, shootCloseToShootFar()),
+                shoot(),
+                follow(follower, shootFarToPark()),
+            )
+        ),
     )
 
     override fun init() {
@@ -119,6 +135,7 @@ class SoloAuto : OpMode() {
         transfer = Transfer(hardwareMap).apply { init() }
         releaseServo = ReleaseServo(hardwareMap).apply { init() }
         flowerRamp = FlowerRamp(hardwareMap)
+        turretCamera = Camera(hardwareMap, processors = arrayOf(AprilTag().processor))
     }
 
     override fun start() {
@@ -136,11 +153,15 @@ class SoloAuto : OpMode() {
         transfer.update(chrono.dt)
         releaseServo.update(chrono.dt)
         flowerRamp.update(chrono.dt)
+        turretCamera.update(chrono.dt)
         follower.update()
 
         // Aim at hive
         turret.aimAtHive(follower.pose().toPioneerPose())
         flywheel.shootAtHive(follower.pose().toPioneerPose())
+
+        // Update hive vision
+        updateHiveVision()
 
         // Execute scheduler routine
         Scheduler.execute()
@@ -154,15 +175,33 @@ class SoloAuto : OpMode() {
             telemetry.addData("Path number", follower.pathIndex())
         }
 
+        telemetry.addData("Hive tipped", hiveIsTipped())
         telemetry.update()
     }
 
     // Pedro ivy commands
-    fun shoot(): Command {
+    private fun shoot(): Command {
         return sequential(
             instant { releaseServo.open() }, // Release shooter servo
             waitMs(2500.0), // Wait for shooter
             instant { releaseServo.close() } // Close shooter servo
         )
+    }
+
+    private fun updateHiveVision() {
+        val detections = turretCamera.getProcessor<AprilTagProcessor>()?.detections ?: return
+        for (detection in detections) {
+            if (detection is AprilTagClusterDetection) {
+                tippedDetections.addLast(abs(detection.ftcPose.roll) < 90.0)
+                while (tippedDetections.size > detectionWindow) tippedDetections.removeFirst()
+                break
+            }
+        }
+    }
+
+    // Is the hive in a scorable position?
+    private fun hiveIsTipped(): Boolean {
+        if (tippedDetections.size < minDetections) return false // not enough data, not tipped
+        return tippedDetections.count { it } > tippedDetections.size / 2 // majority wins
     }
 }
