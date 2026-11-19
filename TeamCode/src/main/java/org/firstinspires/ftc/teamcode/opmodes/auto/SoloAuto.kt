@@ -40,14 +40,14 @@ class SoloAuto : OpMode() {
     private val chrono = Chrono(false)
 
     // Hardware
-    lateinit var led: LED
-    lateinit var turret: Turret
-    lateinit var flywheel: DualFlywheel
-    lateinit var intake: Intake
-    lateinit var transfer: Transfer
-    lateinit var releaseServo: ReleaseServo
-    lateinit var flowerRamp: FlowerRamp
-    lateinit var turretCamera: Camera
+    var led: LED? = null
+    var turret: Turret? = null
+    var flywheel: DualFlywheel? = null
+    var intake: Intake? = null
+    var transfer: Transfer? = null
+    var releaseServo: ReleaseServo? = null
+    var flowerRamp: FlowerRamp? = null
+    var turretCamera: Camera? = null
 
     // Hive tip tracking
     private val tippedDetections = ArrayDeque<Boolean>()
@@ -85,11 +85,11 @@ class SoloAuto : OpMode() {
     // Autonomous routine
     fun autoRoutine(): Command = sequential(
         shoot(),
-        instant { intake.setPower(1.0) },
+        instant { intake?.setPower(1.0) },
         follow(follower, startToCollect()).withMaxVelocity(25.0),
-        instant { intake.setPower(0.0) },
+        instant { intake?.setPower(0.0) },
         follow(follower, collectToShootFar()),
-        instant { flowerRamp.down() },
+        instant { flowerRamp?.down() },
         shoot(),
         follow(follower, shootFarToFlowerFar()),
         // Might need to wait for intake
@@ -100,7 +100,7 @@ class SoloAuto : OpMode() {
             follow(follower, flowerCloseToShootClose()),
             sequential(
                 waitMs(1000.0),
-                instant { flowerRamp.up() }
+                instant { flowerRamp?.up() }
             )
         ),
         // Is hive tipped?
@@ -140,25 +140,25 @@ class SoloAuto : OpMode() {
 
     override fun start() {
         schedule(autoRoutine())
-        transfer.setPower(1.0) // Enable transfer
+        transfer?.setPower(1.0) // Enable transfer
     }
 
     override fun loop() {
         // Update subsystems
         chrono.update()
-        led.update(chrono.dt)
-        turret.update(chrono.dt)
-        flywheel.update(chrono.dt)
-        intake.update(chrono.dt)
-        transfer.update(chrono.dt)
-        releaseServo.update(chrono.dt)
-        flowerRamp.update(chrono.dt)
-        turretCamera.update(chrono.dt)
+        led?.update(chrono.dt)
+        turret?.update(chrono.dt)
+        flywheel?.update(chrono.dt)
+        intake?.update(chrono.dt)
+        transfer?.update(chrono.dt)
+        releaseServo?.update(chrono.dt)
+        flowerRamp?.update(chrono.dt)
+        turretCamera?.update(chrono.dt)
         follower.update()
 
         // Aim at hive
-        turret.aimAtHive(follower.pose().toPioneerPose())
-        flywheel.shootAtHive(follower.pose().toPioneerPose())
+        turret?.aimAtHive(follower.pose().toPioneerPose())
+        flywheel?.shootAtHive(follower.pose().toPioneerPose())
 
         // Update hive vision
         updateHiveVision()
@@ -182,14 +182,14 @@ class SoloAuto : OpMode() {
     // Pedro ivy commands
     private fun shoot(): Command {
         return sequential(
-            instant { releaseServo.open() }, // Release shooter servo
+            instant { releaseServo?.open() }, // Release shooter servo
             waitMs(2500.0), // Wait for shooter
-            instant { releaseServo.close() } // Close shooter servo
+            instant { releaseServo?.close() } // Close shooter servo
         )
     }
 
     private fun updateHiveVision() {
-        val detections = turretCamera.getProcessor<AprilTagProcessor>()?.detections ?: return
+        val detections = turretCamera?.getProcessor<AprilTagProcessor>()?.detections ?: return
         for (detection in detections) {
             if (detection is AprilTagClusterDetection) {
                 tippedDetections.addLast(abs(detection.ftcPose.roll) < 90.0)
