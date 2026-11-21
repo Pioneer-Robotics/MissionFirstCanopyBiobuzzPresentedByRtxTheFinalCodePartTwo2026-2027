@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
-import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.Constants as C
 import org.firstinspires.ftc.teamcode.helpers.Chrono
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.localization.Localizer
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.localization.Localizer
  */
 class Pinpoint(
     private val hardwareMap: HardwareMap,
-    private val pinpointName: String = "pinpoint",
+    private val pinpointName: String = C.HardwareNames.PINPOINT,
     private val startPose: Pose = Pose(),
 ) : Localizer {
     override val name = "PinpointLocalizer"
@@ -34,9 +34,9 @@ class Pinpoint(
     override fun init() {
         pinpoint = hardwareMap.get(GoBildaPinpointDriver::class.java, pinpointName)
 
-        pinpoint.setOffsets(Constants.Pinpoint.X_POD_OFFSET_MM, Constants.Pinpoint.Y_POD_OFFSET_MM, DistanceUnit.MM)
-        pinpoint.setEncoderResolution(Constants.Pinpoint.ENCODER_RESOLUTION)
-        pinpoint.setEncoderDirections(Constants.Pinpoint.X_ENCODER_DIRECTION, Constants.Pinpoint.Y_ENCODER_DIRECTION)
+        pinpoint.setOffsets(C.Pinpoint.X_POD_OFFSET_MM, C.Pinpoint.Y_POD_OFFSET_MM, DistanceUnit.MM)
+        pinpoint.setEncoderResolution(C.Pinpoint.ENCODER_RESOLUTION)
+        pinpoint.setEncoderDirections(C.Pinpoint.X_ENCODER_DIRECTION, C.Pinpoint.Y_ENCODER_DIRECTION)
         pinpoint.recalibrateIMU()
         // Coordinate conversion: robot_y → pinpoint_x, -robot_x → pinpoint_y, -robot_θ → pinpoint_θ
         pinpoint.setPosition(Pose2D(DistanceUnit.CM, startPose.y, -startPose.x, AngleUnit.RADIANS, -startPose.theta))
