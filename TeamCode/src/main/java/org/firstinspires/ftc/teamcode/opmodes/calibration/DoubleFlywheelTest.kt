@@ -20,6 +20,7 @@ class DoubleFlywheelTest : OpMode() {
     val dashboardTelemetry = FtcDashboard.getInstance().telemetry
     var targetVelocity = 0.0
     var power = 0.0
+    var transferPower = 0.5
 
     var flywheelToggle: Toggle = Toggle(false)
     var velToggle: Toggle = Toggle(true)
@@ -75,7 +76,10 @@ class DoubleFlywheelTest : OpMode() {
 
         transferToggle.toggle(gamepad1.dpadRightWasPressed())
 
-        val transferPower = if (gamepad1.dpad_left) -1.0 else 1.0
+        if (gamepad1.leftStickButtonWasPressed()) { transferPower -= 0.1 }
+        if (gamepad1.rightStickButtonWasPressed()) { transferPower += 0.1 }
+
+        val transferPower = if (gamepad1.dpad_left) -transferPower else transferPower
         if (transferToggle.state) {
             transfer.setPower(transferPower)
         } else {
@@ -129,6 +133,7 @@ class DoubleFlywheelTest : OpMode() {
                 } else {
                     telemetry.addData("Power", power)
                 }
+                telemetry.addData("Transfer Power", transfer.getPower())
                 telemetry.addLine("Press CIRCLE (Page 1/4)")
             }
 
@@ -138,6 +143,10 @@ class DoubleFlywheelTest : OpMode() {
                 telemetry.addLine("Press SQUARE to start/stop flywheel")
                 telemetry.addLine("Press CROSS to switch velocity/power")
                 telemetry.addLine("Press TRIANGLE to toggle leader/follower system")
+                telemetry.addLine("Press DPAD_RIGHT to toggle transfer")
+                telemetry.addLine("Press DPAD_LEFT to reverse transfer")
+                telemetry.addLine("Press LEFT/RIGHT_STICK_BUTTON to decrease/increase transfer speed")
+
                 telemetry.addLine("Press CIRCLE (Page 2/4)")
             }
 
@@ -195,6 +204,9 @@ class DoubleFlywheelTest : OpMode() {
                 telemetry.addLine("Press SQUARE to start/stop flywheel")
                 telemetry.addLine("Press CROSS to switch velocity/power")
                 telemetry.addLine("Press TRIANGLE to toggle leader/follower system")
+                telemetry.addLine("Press DPAD_RIGHT to toggle transfer")
+                telemetry.addLine("Press DPAD_LEFT to reverse transfer")
+                telemetry.addLine("Press LEFT/RIGHT_STICK_BUTTON to decrease/increase transfer speed")
 
                 telemetry.addLine("Press CIRCLE (Page 4/4)")
             }

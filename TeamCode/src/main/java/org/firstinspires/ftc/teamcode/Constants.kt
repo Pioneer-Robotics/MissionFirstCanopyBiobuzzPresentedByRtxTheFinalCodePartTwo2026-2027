@@ -217,6 +217,11 @@ object Constants {
 
     }
 
+    object Transfer {
+        const val LOAD_POWER = 0.6
+        const val SHOOT_POWER = 1.0
+    }
+
     object Misc {
         val VERBOSE_LEVEL = Verbose.DEBUG
         val RESET_POSE = Points.BOTTOM_LEFT_REACHABLE
