@@ -11,7 +11,7 @@ class Turret(
     private val hardwareMap: HardwareMap,
     private val servo1Name: String = Constants.HardwareNames.TURRET_SERVO_1,
     private val servo2Name: String = Constants.HardwareNames.TURRET_SERVO_2,
-    private val encoderName: String = Constants.HardwareNames.TURRET_ENCODER
+    private val encoderName: String = Constants.HardwareNames.INTAKE
 ) : HardwareComponent {
 
     private lateinit var servoPair: CRServoPair

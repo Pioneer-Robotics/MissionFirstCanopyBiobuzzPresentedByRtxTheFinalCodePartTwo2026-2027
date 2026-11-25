@@ -53,6 +53,7 @@ class SoloAuto : OpMode() {
     private val tippedDetections = ArrayDeque<Boolean>()
     private val detectionWindow = 20 // Store last N sightings
     private val minDetections = 5 // Min amount of detections required
+    private var lastDetectionTime = System.nanoTime()
 
     // Points
     private val start = poseFactory.of(56.0, 8.0, 180.0)
@@ -134,8 +135,8 @@ class SoloAuto : OpMode() {
         intake = Intake(hardwareMap).apply { init() }
         transfer = Transfer(hardwareMap).apply { init() }
         releaseServo = ReleaseServo(hardwareMap).apply { init() }
-        flowerRamp = FlowerRamp(hardwareMap)
-        turretCamera = Camera(hardwareMap, processors = arrayOf(AprilTag().processor))
+        flowerRamp = FlowerRamp(hardwareMap).apply { init() }
+        turretCamera = Camera(hardwareMap, processors = arrayOf(AprilTag().processor)).apply { init() }
     }
 
     override fun start() {
@@ -193,6 +194,7 @@ class SoloAuto : OpMode() {
         for (detection in detections) {
             if (detection is AprilTagClusterDetection) {
                 tippedDetections.addLast(abs(detection.ftcPose.roll) < 90.0)
+                lastDetectionTime = System.nanoTime()
                 while (tippedDetections.size > detectionWindow) tippedDetections.removeFirst()
                 break
             }
@@ -201,6 +203,7 @@ class SoloAuto : OpMode() {
 
     // Is the hive in a scorable position?
     private fun hiveIsTipped(): Boolean {
+        if ((System.nanoTime() - lastDetectionTime) > 1e9) return false // too long since last detection
         if (tippedDetections.size < minDetections) return false // not enough data, not tipped
         return tippedDetections.count { it } > tippedDetections.size / 2 // majority wins
     }

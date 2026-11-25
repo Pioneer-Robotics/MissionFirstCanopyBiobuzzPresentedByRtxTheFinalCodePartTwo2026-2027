@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.hardware.Turret
 import org.firstinspires.ftc.teamcode.helpers.Chrono
 import org.firstinspires.ftc.teamcode.helpers.Pose
@@ -32,6 +33,7 @@ class TurretTest : OpMode() {
     val chrono = Chrono(false)
 
     private lateinit var turret: Turret
+    private lateinit var flywheel: DualFlywheel
 
     var robotPose = Pose(HALF_FIELD, HALF_FIELD, theta=0.0)
     var goalPose = Pose(HALF_FIELD, HALF_FIELD, theta=0.0)
@@ -39,11 +41,14 @@ class TurretTest : OpMode() {
     override fun init() {
         turret = Turret(hardwareMap).apply { init() }
         turret.gotoPosition(0.0)
+
+        flywheel = DualFlywheel(hardwareMap)
     }
 
     override fun loop() {
         chrono.update()
         turret.update(chrono.dt)
+        flywheel.update(chrono.dt)
 
         poseToggle.toggle(gamepad1.circle)
         updatePointFromTouchpad()
@@ -67,9 +72,8 @@ class TurretTest : OpMode() {
             robotPose += Pose(theta=0.01*gamepad1.right_stick_x)
         }
 
-        turret.aimAtPos(robotPose, goalPose)
-        val dx = goalPose.x - robotPose.x
-        val dy = goalPose.y - robotPose.y
+        turret.aimAtHive(robotPose)
+        flywheel.shootAtHive(robotPose)
 
         telemetry.addData("Robot Pose", robotPose)
         telemetry.addData("Goal Pose", goalPose)

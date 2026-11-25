@@ -54,10 +54,10 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
         driver1.update()
         driver2.update()
 
-        handleTransfer()
+//        handleTransfer()
 
         // Add telemetry data
-        addTelemetryData()
+        handleTelemetry()
     }
 
     private fun handleTransfer(){
@@ -79,9 +79,10 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     }
 
 
-    private fun addTelemetryData() {
+    private fun handleTelemetry() {
         addTelemetryData("Drive Power", driver1.drivePower, Verbose.INFO)
         addTelemetryData("Pose", bot.pinpoint!!.pose, Verbose.DEBUG)
+        addTelemetryData("Flywheel Velocity", bot.flywheel?.getVelocity(), Verbose.INFO)
 
         addTelemetryData("Field Centric", driver1.fieldCentric, Verbose.INFO)
         addTelemetryData("Velocity", "vx: %.2f, vy: %.2f".format(bot.pinpoint?.pose?.vx, bot.pinpoint?.pose?.vy), Verbose.DEBUG)

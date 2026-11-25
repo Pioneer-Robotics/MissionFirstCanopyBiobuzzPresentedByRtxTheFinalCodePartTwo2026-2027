@@ -18,7 +18,7 @@ class DualFlywheel(
     private lateinit var leader: DcMotorEx
     private lateinit var follower: DcMotorEx
 
-    var useLeader = true
+    var useLeader = false
         private set
     private var useVel = true
     private var target = 0.0
@@ -29,8 +29,8 @@ class DualFlywheel(
         leader = hardwareMap.get(DcMotorEx::class.java, motor1Name)
         follower = hardwareMap.get(DcMotorEx::class.java, motor2Name)
 
-        leader.direction = DcMotorSimple.Direction.FORWARD
-        follower.direction = DcMotorSimple.Direction.REVERSE
+        leader.direction = DcMotorSimple.Direction.REVERSE
+        follower.direction = DcMotorSimple.Direction.FORWARD
 
         // Leader: closed-loop velocity control via the hub's internal PIDF.
         leader.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER

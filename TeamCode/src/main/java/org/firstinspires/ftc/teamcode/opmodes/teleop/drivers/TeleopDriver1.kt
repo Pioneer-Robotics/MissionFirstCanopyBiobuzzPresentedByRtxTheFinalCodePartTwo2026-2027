@@ -83,42 +83,42 @@ class TeleopDriver1(
 
     private fun handleIntakeTransfer() {
         //Basic on/off
-        if (gamepad.left_bumper){
-            intakeState = true
-            requestTransferOn = true
-        } else {
-            intakeState = false
-            requestTransferOn = false
-        }
+//        if (gamepad.left_bumper){
+//            intakeState = true
+//            requestTransferOn = true
+//        } else {
+//            intakeState = false
+//            requestTransferOn = false
+//        }
+//        //Auto stop intake
+//        if (teleop.storageFull.justChanged){
+//
+//            autoStopIntake = if (teleop.storageFull.state) true else false
+//        }
+//
+//        if (autoStopIntake){
+//            intakeState = false
+//            if (gamepad.leftBumperWasReleased()){
+//                autoStopIntake = false
+//            }
+//        }
+//        //All reverse controls
+//        if (gamepad.dpad_up){
+//            reverseTransfer = true
+//            reverseIntake = true
+//        } else if (gamepad.dpad_down){
+//            reverseIntake = true
+//        } else {
+//            reverseIntake = false
+//            reverseTransfer = false
+//        }
+//        //Talk to intake hardware
+//        var intakePow = if (reverseIntake) -1.0 else 1.0
+//        intakePow *= if (intakeState) 1.0 else 0.0
 
-        //Auto stop intake
-        if (teleop.storageFull.justChanged){
-            autoStopIntake = teleop.storageFull.state
-        }
-        if (autoStopIntake){
-            intakeState = false
-            if (gamepad.leftBumperWasReleased()){
-                autoStopIntake = false
-            }
-        }
-
-        //All reverse controls
-        if (gamepad.dpad_up){
-            reverseTransfer = true
-            reverseIntake = true
-        } else if (gamepad.dpad_down){
-            reverseIntake = true
-        } else {
-            reverseIntake = false
-            reverseTransfer = false
-        }
-
-        //Talk to intake hardware
-        var intakePow = if (reverseIntake) -1.0 else 1.0
-        intakePow *= if (intakeState) 1.0 else 0.0
-
-        bot.intake?.setPower(intakePow)
-
+        intakeToggle.toggle(gamepad.circle)
+        bot.intake?.setPower(if (intakeToggle.state) 1.0 else 0.0)
+        bot.transfer?.setPower(if (intakeToggle.state) 0.75 else 0.0)
     }
 
     private fun handleResetOdo() {

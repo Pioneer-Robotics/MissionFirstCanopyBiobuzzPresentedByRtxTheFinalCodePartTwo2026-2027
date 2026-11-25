@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.hardware
 import android.util.Size
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.VisionProcessor
 import org.firstinspires.ftc.teamcode.Constants
+import java.util.concurrent.TimeUnit
 import kotlin.jvm.java
 
 /**
@@ -27,7 +30,7 @@ class Camera(
             VisionPortal
                 .Builder()
                 .setCamera(hardwareMap.get(WebcamName::class.java, cameraName))
-                .setCameraResolution(Size(1280, 720))
+                .setCameraResolution(Size(800, 600))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .apply {

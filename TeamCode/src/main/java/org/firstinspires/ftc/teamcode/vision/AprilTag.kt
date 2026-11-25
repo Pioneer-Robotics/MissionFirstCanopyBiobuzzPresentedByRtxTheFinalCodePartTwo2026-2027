@@ -35,13 +35,13 @@ class AprilTag(
     private val library: AprilTagLibrary =
         AprilTagLibrary
             .Builder()
-            .addTags(AprilTagGameDatabase.getCurrentGameTagLibrary())
+            .addTags(AprilTagGameDatabase.getBioBuzzTagLibrary())
             .build()
 
     override val processor: AprilTagProcessor =
         AprilTagProcessor
             .Builder()
-            .setTagLibrary(library)
+//            .setTagLibrary(library)
             .setCameraPose(position, orientation)
             .setLensIntrinsics(Constants.Camera.FX, Constants.Camera.FY, Constants.Camera.CX, Constants.Camera.CY)
             .setOutputUnits(distanceUnit, angleUnit)
