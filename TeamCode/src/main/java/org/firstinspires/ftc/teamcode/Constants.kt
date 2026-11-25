@@ -45,6 +45,8 @@ object Constants {
         // Other
         const val WEBCAM = "Webcam 1"
         const val LED_DRIVER = "prism"
+        const val BREAK_BEAM_1 = "breakBeam1"
+        const val BREAK_BEAM_2 = "breakBeam2"
     }
 
     // -------- Odometry (3-wheel) --------
@@ -224,6 +226,8 @@ object Constants {
     object Transfer {
         const val LOAD_POWER = 0.6
         const val SHOOT_POWER = 1.0
+
+        const val BREAK_BEAM_TIME_MS = 250.0
     }
 
     object Misc {
