@@ -39,7 +39,8 @@ object Constants {
         const val RELEASE_SERVO = "releaseServo"
         const val TURRET_SERVO_1 = "turretServo1"
         const val TURRET_SERVO_2 = "turretServo2"
-        const val FLOWER_SERVO = "flowerServo"
+        const val FLOWER_SERVO_1 = "flowerServo1"
+        const val FLOWER_SERVO_2 = "flowerServo2"
 
         // Other
         const val WEBCAM = "Webcam 1"
@@ -188,6 +189,9 @@ object Constants {
 
         const val MIN_ANGLE_DEG = 0.0
         const val MAX_ANGLE_DEG = 360.0
+
+        const val RELEASE_TIME_TORQUE = 350 // Time for release servo to open if it is a torque servo
+        const val RELEASE_TIME_SPEED = 150 // If it is a speed servo
     }
 
     object ServoPositions {

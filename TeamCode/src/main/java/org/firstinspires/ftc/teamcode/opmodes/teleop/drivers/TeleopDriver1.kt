@@ -90,18 +90,18 @@ class TeleopDriver1(
             intakeState = false
             requestTransferOn = false
         }
+
         //Auto stop intake
         if (teleop.storageFull.justChanged){
-
-            autoStopIntake = if (teleop.storageFull.state) true else false
+            autoStopIntake = teleop.storageFull.state
         }
-
         if (autoStopIntake){
             intakeState = false
             if (gamepad.leftBumperWasReleased()){
                 autoStopIntake = false
             }
         }
+
         //All reverse controls
         if (gamepad.dpad_up){
             reverseTransfer = true
@@ -112,6 +112,7 @@ class TeleopDriver1(
             reverseIntake = false
             reverseTransfer = false
         }
+
         //Talk to intake hardware
         var intakePow = if (reverseIntake) -1.0 else 1.0
         intakePow *= if (intakeState) 1.0 else 0.0

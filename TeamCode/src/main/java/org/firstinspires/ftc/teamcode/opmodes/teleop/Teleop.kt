@@ -18,7 +18,6 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private val allianceToggle = Toggle(false)
     private var changedAllianceColor = false
 
-    var transferState = false
     var storageFull = Toggle(false)
 
     override fun onInit() {
@@ -62,7 +61,6 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     }
 
     private fun handleTransfer(){
-        transferState = driver1.requestTransferOn || driver2.requestTransferOn
         var transferPow = 0.0
 
         if (driver1.reverseTransfer) { // Highest Priority: Reverse if requested
@@ -71,6 +69,10 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
             transferPow = Constants.Transfer.SHOOT_POWER
         } else if (driver1.requestTransferOn) { // Next Priority: Idle at lower power
             transferPow = Constants.Transfer.LOAD_POWER
+        }
+
+        if (driver2.stopTransfer) {
+            transferPow *= 0.0
         }
 
         bot.transfer?.setPower(transferPow)

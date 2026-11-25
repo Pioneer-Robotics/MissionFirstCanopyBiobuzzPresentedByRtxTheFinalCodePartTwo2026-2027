@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.drivers
 
 import com.qualcomm.robotcore.hardware.Gamepad
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Bot
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.opmodes.teleop.Teleop
 
@@ -12,9 +14,11 @@ class TeleopDriver2(
 ) {
 
     var requestTransferOn = false
+    var stopTransfer = false
     var autoTrack = Toggle(true)
     var autoFlywheel = Toggle(true)
     var defaultFlyVel = 2150.0
+    var preShootTimeout = ElapsedTime()
 
     fun onStart() {
     }
@@ -28,9 +32,22 @@ class TeleopDriver2(
     }
 
     private fun handleShoot() {
+
+        // Shoot was triggered
+        if (gamepad.rightBumperWasPressed()) {
+            preShootTimeout.reset()
+        }
+
         if (gamepad.right_bumper) {
             bot.releaseServo?.open()
-            requestTransferOn = true
+
+            if (preShootTimeout.milliseconds() > Constants.Turret.RELEASE_TIME_TORQUE) {
+                stopTransfer = false
+                requestTransferOn = true // Wait until servo has moved to push out
+            } else {
+                stopTransfer = true
+                requestTransferOn = false
+            }
 
         } else {
             bot.releaseServo?.close()
