@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.prism.Color
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.helpers.next
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
+import org.firstinspires.ftc.teamcode.opmodes.teleop.driverProfiles.ControlProfile1
 import org.firstinspires.ftc.teamcode.opmodes.teleop.drivers.TeleopDriver1
 import org.firstinspires.ftc.teamcode.opmodes.teleop.drivers.TeleopDriver2
 
@@ -18,11 +19,13 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private val allianceToggle = Toggle(false)
     private var changedAllianceColor = false
 
+    private val controlProfile = ControlProfile1(gamepad1, gamepad2)
+
     var storageFull = Toggle(false)
 
     override fun onInit() {
-        driver1 = TeleopDriver1(gamepad1, bot, this)
-        driver2 = TeleopDriver2(gamepad2, bot, this)
+        driver1 = TeleopDriver1(controlProfile, bot, this)
+        driver2 = TeleopDriver2(controlProfile, bot, this)
     }
 
     override fun onInitLoop() {

@@ -6,9 +6,10 @@ import org.firstinspires.ftc.teamcode.Bot
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.opmodes.teleop.Teleop
+import org.firstinspires.ftc.teamcode.opmodes.teleop.driverProfiles.ControlProfile
 
 class TeleopDriver2(
-    private val gamepad: Gamepad,
+    private val controls: ControlProfile,
     private val bot: Bot,
     private val teleop: Teleop
 ) {
@@ -34,11 +35,11 @@ class TeleopDriver2(
     private fun handleShoot() {
 
         // Shoot was triggered
-        if (gamepad.rightBumperWasPressed()) {
+        if (controls.shootTriggered) {
             preShootTimeout.reset()
         }
 
-        if (gamepad.right_bumper) {
+        if (controls.shoot) {
             bot.releaseServo?.open()
 
             if (preShootTimeout.milliseconds() > Constants.Turret.RELEASE_TIME_TORQUE) {
@@ -57,7 +58,7 @@ class TeleopDriver2(
     }
 
     private fun handleAutoTrack() {
-        autoTrack.toggle(gamepad.touchpad)
+        autoTrack.toggle(controls.toggleAutoTrack)
 
         if (autoTrack.state) {
             bot.turret?.aimAtHive(bot.pinpoint?.pose!!)
@@ -67,13 +68,13 @@ class TeleopDriver2(
     private fun handleManualTrack() {
         if (!autoTrack.state) {
             val ang = bot.turret?.getAngle()!!
-            val change = gamepad.right_trigger - gamepad.left_trigger
+            val change = controls.incManTrack - controls.decManTrack
             bot.turret?.gotoAngle(ang + change)
         }
     }
 
     private fun handleAutoFlywheel() {
-        autoFlywheel.toggle(gamepad.cross)
+        autoFlywheel.toggle(controls.toggleAutoFlywheel)
 
         if (autoFlywheel.state) {
             bot.flywheel?.shootAtHive(bot.pinpoint?.pose!!)
@@ -82,9 +83,9 @@ class TeleopDriver2(
 
     private fun handleManualFlywheel() {
         if (!autoFlywheel.state) {
-            if (gamepad.dpadUpWasPressed()) {
+            if (controls.incManFlywheel) {
                 defaultFlyVel += 50.0
-            } else if (gamepad.dpadDownWasPressed()) {
+            } else if (controls.decManFlywheel) {
                 defaultFlyVel -= 50.0
             }
             bot.flywheel?.setVelocity(defaultFlyVel)

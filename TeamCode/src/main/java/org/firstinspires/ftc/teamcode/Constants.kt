@@ -197,8 +197,8 @@ object Constants {
     }
 
     object ServoPositions {
-        const val RELEASE_OPEN = 1.0
-        const val RELEASE_CLOSE = 0.0
+        const val RELEASE_OPEN = 0.0
+        const val RELEASE_CLOSE = 1.0
 
         const val FLOWER_DOWN = 0.0
         const val FLOWER_UP = 1.0

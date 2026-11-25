@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.drivers
 
-import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.Bot
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.general.AllianceColor
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.opmodes.teleop.Teleop
+import org.firstinspires.ftc.teamcode.opmodes.teleop.driverProfiles.ControlProfile
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
 class TeleopDriver1(
-    private val gamepad: Gamepad,
+    private val controls: ControlProfile,
     private val bot: Bot,
     private val teleop: Teleop
 ) {
@@ -43,7 +43,7 @@ class TeleopDriver1(
     }
 
     private fun drive() {
-        var direction = Pose(gamepad.left_stick_x.toDouble(), -gamepad.left_stick_y.toDouble())
+        var direction = Pose(controls.strafe.toDouble(), -controls.drive.toDouble())
         if (fieldCentric) {
             var angle = atan2(direction.y, direction.x) - bot.pinpoint?.pose!!.theta
             angle += when (bot.allianceColor) {
@@ -58,7 +58,7 @@ class TeleopDriver1(
             Pose(
                 vx = direction.x,
                 vy = direction.y,
-                omega = gamepad.right_stick_x.toDouble(),
+                omega = controls.turn.toDouble(),
             ),
             drivePower,
             Constants.Drive.MAX_MOTOR_VELOCITY_TPS
@@ -66,8 +66,8 @@ class TeleopDriver1(
     }
 
     private fun updateDrivePower() {
-        incDrivePower.toggle(gamepad.right_bumper)
-        decDrivePower.toggle(gamepad.left_bumper)
+        incDrivePower.toggle(controls.incDrivePower)
+        decDrivePower.toggle(controls.decDrivePower)
         if (incDrivePower.justChanged) {
             drivePower += 0.1
         }
@@ -78,57 +78,56 @@ class TeleopDriver1(
     }
 
     private fun updateFieldCentric() {
-        fieldCentricToggle.toggle(gamepad.touchpad)
+        fieldCentricToggle.toggle(controls.toggleFieldCentric)
     }
 
     private fun handleIntakeTransfer() {
         //Basic on/off
-//        if (gamepad.left_bumper){
-//            intakeState = true
-//            requestTransferOn = true
-//        } else {
-//            intakeState = false
-//            requestTransferOn = false
-//        }
-//        //Auto stop intake
-//        if (teleop.storageFull.justChanged){
-//
-//            autoStopIntake = if (teleop.storageFull.state) true else false
-//        }
-//
-//        if (autoStopIntake){
-//            intakeState = false
-//            if (gamepad.leftBumperWasReleased()){
-//                autoStopIntake = false
-//            }
-//        }
-//        //All reverse controls
-//        if (gamepad.dpad_up){
-//            reverseTransfer = true
-//            reverseIntake = true
-//        } else if (gamepad.dpad_down){
-//            reverseIntake = true
-//        } else {
-//            reverseIntake = false
-//            reverseTransfer = false
-//        }
-//        //Talk to intake hardware
-//        var intakePow = if (reverseIntake) -1.0 else 1.0
-//        intakePow *= if (intakeState) 1.0 else 0.0
+        if (controls.intake) {
+            intakeState = true
+            requestTransferOn = true
+        } else {
+            intakeState = false
+            requestTransferOn = false
+        }
 
-        intakeToggle.toggle(gamepad.circle)
-        bot.intake?.setPower(if (intakeToggle.state) 1.0 else 0.0)
-        bot.transfer?.setPower(if (intakeToggle.state) 0.75 else 0.0)
+        //Auto stop intake
+        if (teleop.storageFull.justChanged) {
+            autoStopIntake = teleop.storageFull.state
+        }
+        if (autoStopIntake) {
+            intakeState = false
+            if (controls.endAutoStopIntake) {
+                autoStopIntake = false
+            }
+        }
+
+        //All reverse controls
+        if (controls.reverseAll) {
+            reverseTransfer = true
+            reverseIntake = true
+        } else if (controls.reverseIntake) {
+            reverseIntake = true
+        } else {
+            reverseIntake = false
+            reverseTransfer = false
+        }
+
+        //Talk to intake hardware
+        var intakePow = if (reverseIntake) -1.0 else 1.0
+        intakePow *= if (intakeState) 1.0 else 0.0
+
+        bot.intake?.setPower(intakePow)
     }
 
     private fun handleResetOdo() {
-        if (gamepad.right_trigger > 0.5 && gamepad.left_trigger > 0.5) {
+        if (controls.resetOdo1 > 0.5 && controls.resetOdo2 > 0.5) {
             bot.pinpoint?.reset(Constants.Misc.RESET_POSE)
         }
     }
 
     private fun handleFlowerRamp() {
-        flowerToggle.toggle(gamepad.cross)
+        flowerToggle.toggle(controls.flowerRamp)
 
         if (flowerToggle.state) {
             bot.flowerRamp?.down()
