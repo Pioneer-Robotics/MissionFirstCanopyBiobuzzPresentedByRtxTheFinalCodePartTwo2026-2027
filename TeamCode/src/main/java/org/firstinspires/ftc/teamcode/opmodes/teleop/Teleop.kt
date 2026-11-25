@@ -67,11 +67,11 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
             transferPow = -Constants.Transfer.SHOOT_POWER
         } else if (driver2.requestTransferOn) { // Next Priority: Shoot at high power
             transferPow = Constants.Transfer.SHOOT_POWER
-        } else if (driver1.requestTransferOn) { // Next Priority: Idle at lower power
+        } else if (driver1.requestTransferOn and !bot.breakBeam?.state!!) { // Next Priority: Idle at lower power
             transferPow = Constants.Transfer.LOAD_POWER
         }
 
-        if (driver2.stopTransfer) {
+        if (driver2.stopTransfer) { // If opening servo to shoot, stop transfer
             transferPow *= 0.0
         }
 

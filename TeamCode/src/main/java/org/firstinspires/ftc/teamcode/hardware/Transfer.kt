@@ -20,13 +20,6 @@ class Transfer(
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
-    override fun update(dt: Double) {
-        // Is full?
-        // setPower(0.0)
-        // Else
-        // setPower(1.0)
-    }
-
     fun setPower(power: Double) {
         motor.power = power
     }
