@@ -32,6 +32,7 @@ interface ControlProfile {
     val incManTrack: Float
     val decManTrack: Float
 
+    val toggleFlywheel: Boolean
     val toggleAutoFlywheel: Boolean
     val incManFlywheel: Boolean
     val decManFlywheel: Boolean

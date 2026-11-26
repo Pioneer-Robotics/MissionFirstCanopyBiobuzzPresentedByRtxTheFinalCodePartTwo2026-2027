@@ -189,10 +189,10 @@ object Constants {
         const val kI = 0.0
         const val kD = 0.0
 
-        const val MIN_ANGLE_DEG = 0.0
-        const val MAX_ANGLE_DEG = 360.0
+        const val MIN_ANGLE_DEG = -180.0
+        const val MAX_ANGLE_DEG = 180.0
 
-        const val RELEASE_TIME_TORQUE = 350 // Time for release servo to open if it is a torque servo
+        const val RELEASE_TIME_TORQUE = 420 // Time for release servo to open if it is a torque servo
         const val RELEASE_TIME_SPEED = 150 // If it is a speed servo
     }
 
@@ -224,10 +224,10 @@ object Constants {
     }
 
     object Transfer {
-        const val LOAD_POWER = 0.6
+        const val LOAD_POWER = 1.0
         const val SHOOT_POWER = 1.0
 
-        const val BREAK_BEAM_TIME_MS = 250.0
+        const val BREAK_BEAM_TIME_MS = 500.0
     }
 
     object Misc {

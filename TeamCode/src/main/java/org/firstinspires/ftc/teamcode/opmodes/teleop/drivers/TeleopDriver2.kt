@@ -16,15 +16,18 @@ class TeleopDriver2(
 
     var requestTransferOn = false
     var stopTransfer = false
-    var autoTrack = Toggle(true)
-    var autoFlywheel = Toggle(true)
+    var autoTrack = Toggle(false)
+    var autoFlywheel = Toggle(false)
+    var flywheelOn = Toggle(true)
     var defaultFlyVel = 2150.0
     var preShootTimeout = ElapsedTime()
+    var manualTurretTarget = 0.0
 
     fun onStart() {
     }
 
     fun update() {
+        handleFlywheelToggle()
         handleShoot()
         handleAutoTrack()
         handleManualTrack()
@@ -67,28 +70,43 @@ class TeleopDriver2(
 
     private fun handleManualTrack() {
         if (!autoTrack.state) {
-            val ang = bot.turret?.getAngle()!!
+            if (autoTrack.justChanged) {
+                manualTurretTarget = bot.turret?.getAngle() ?: 0.0
+            }
             val change = controls.incManTrack - controls.decManTrack
-            bot.turret?.gotoAngle(ang + change)
+            manualTurretTarget += change * 10
+            bot.turret?.gotoAngle(manualTurretTarget)
         }
+    }
+
+    private fun handleFlywheelToggle() {
+        flywheelOn.toggle(controls.toggleFlywheel)
     }
 
     private fun handleAutoFlywheel() {
         autoFlywheel.toggle(controls.toggleAutoFlywheel)
 
         if (autoFlywheel.state) {
-            bot.flywheel?.shootAtHive(bot.pinpoint?.pose!!)
+            if (flywheelOn.state) {
+                bot.flywheel?.shootAtHive(bot.pinpoint?.pose!!)
+            } else {
+                bot.flywheel?.setPower(0.0)
+            }
         }
     }
 
     private fun handleManualFlywheel() {
         if (!autoFlywheel.state) {
-            if (controls.incManFlywheel) {
-                defaultFlyVel += 50.0
-            } else if (controls.decManFlywheel) {
-                defaultFlyVel -= 50.0
+            if (flywheelOn.state) {
+                if (controls.incManFlywheel) {
+                    defaultFlyVel += 50.0
+                } else if (controls.decManFlywheel) {
+                    defaultFlyVel -= 50.0
+                }
+                bot.flywheel?.setVelocity(defaultFlyVel)
+            } else {
+                bot.flywheel?.setPower(0.0)
             }
-            bot.flywheel?.setVelocity(defaultFlyVel)
         }
     }
 }

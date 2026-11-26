@@ -106,6 +106,8 @@ class TeleopDriver1(
         if (controls.reverseAll) {
             reverseTransfer = true
             reverseIntake = true
+            requestTransferOn = true
+            intakeState = true
         } else if (controls.reverseIntake) {
             reverseIntake = true
         } else {

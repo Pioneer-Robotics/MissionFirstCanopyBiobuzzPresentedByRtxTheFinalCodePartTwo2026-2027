@@ -17,8 +17,8 @@ class BreakBeamPair(
     private var beam1Time = ElapsedTime()
     private var beam2Time = ElapsedTime()
 
-    private var beam1WasActive = false
-    private var beam2WasActive = false
+    private var beam1WasBlocked = false
+    private var beam2WasBlocked = false
     var state = false
 
     private val sensorDelay = Constants.Transfer.BREAK_BEAM_TIME_MS
@@ -32,17 +32,20 @@ class BreakBeamPair(
     }
 
     override fun update(dt: Double) {
-        if (!beam1WasActive and beam1.state) { // Beam 1 became active
+        val beam1IsBlocked = !beam1.state
+        val beam2IsBlocked = !beam2.state
+
+        if (!beam1WasBlocked and beam1IsBlocked) { // Beam 1 became active
             beam1Time.reset()
         }
-        if (!beam2WasActive and beam2.state) { // Beam 2 became active
+        if (!beam2WasBlocked and beam2IsBlocked) { // Beam 2 became active
             beam2Time.reset()
         }
 
         // If at least one beam has been broken for long enough, report a detection
-        state = (beam1.state and (beam1Time.milliseconds() > sensorDelay)) or (beam2.state and (beam2Time.milliseconds() > sensorDelay))
+        state = (beam1IsBlocked and (beam1Time.milliseconds() > sensorDelay)) or (beam2IsBlocked and (beam2Time.milliseconds() > sensorDelay))
 
-        beam1WasActive = beam1.state
-        beam2WasActive = beam2.state
+        beam1WasBlocked = !beam1.state
+        beam2WasBlocked = !beam2.state
     }
 }

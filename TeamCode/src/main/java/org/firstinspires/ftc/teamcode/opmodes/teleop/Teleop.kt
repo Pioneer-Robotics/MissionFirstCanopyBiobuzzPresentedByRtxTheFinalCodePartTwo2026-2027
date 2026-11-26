@@ -19,11 +19,12 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private val allianceToggle = Toggle(false)
     private var changedAllianceColor = false
 
-    private val controlProfile = ControlProfile1(gamepad1, gamepad2)
+    private lateinit var controlProfile: ControlProfile1
 
     var storageFull = Toggle(false)
 
     override fun onInit() {
+        controlProfile = ControlProfile1(gamepad1, gamepad2)
         driver1 = TeleopDriver1(controlProfile, bot, this)
         driver2 = TeleopDriver2(controlProfile, bot, this)
     }
@@ -57,7 +58,8 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
         driver1.update()
         driver2.update()
 
-//        handleTransfer()
+        handleTransfer()
+        handleLED()
 
         // Add telemetry data
         handleTelemetry()
@@ -74,18 +76,33 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
             transferPow = Constants.Transfer.LOAD_POWER
         }
 
-        if (driver2.stopTransfer) { // If opening servo to shoot, stop transfer
+        if (driver2.stopTransfer and !driver1.reverseTransfer) { // If opening servo to shoot, stop transfer
             transferPow *= 0.0
         }
 
         bot.transfer?.setPower(transferPow)
     }
 
+    private  fun handleLED() {
+        if (bot.breakBeam?.state == true) {
+            bot.led?.setColor(Color.GREEN)
+        } else {
+            bot.led?.setColor(Color.TRANSPARENT)
+        }
+    }
 
     private fun handleTelemetry() {
         addTelemetryData("Drive Power", driver1.drivePower, Verbose.INFO)
         addTelemetryData("Pose", bot.pinpoint!!.pose, Verbose.DEBUG)
         addTelemetryData("Flywheel Velocity", bot.flywheel?.getVelocity(), Verbose.INFO)
+        addTelemetryData("Flywheel On", driver2.flywheelOn.state, Verbose.INFO)
+        addTelemetryData("Driver 1 transfer", driver1.requestTransferOn, Verbose.INFO)
+        addTelemetryData("Driver 2 transfer", driver2.requestTransferOn, Verbose.INFO)
+        addTelemetryData("Driver 2 force stop transfer", driver2.stopTransfer, Verbose.INFO)
+        addTelemetryData("Driver 1 reverse transfer", driver1.reverseTransfer, Verbose.INFO)
+        addTelemetryData("Breakbeam", bot.breakBeam?.state, Verbose.INFO)
+        addTelemetryData("Turret angle", bot.turret?.getAngle(), Verbose.INFO)
+        addTelemetryData("Turret change", controlProfile.incManTrack - controlProfile.decManTrack, Verbose.INFO)
 
         addTelemetryData("Field Centric", driver1.fieldCentric, Verbose.INFO)
         addTelemetryData("Velocity", "vx: %.2f, vy: %.2f".format(bot.pinpoint?.pose?.vx, bot.pinpoint?.pose?.vy), Verbose.DEBUG)

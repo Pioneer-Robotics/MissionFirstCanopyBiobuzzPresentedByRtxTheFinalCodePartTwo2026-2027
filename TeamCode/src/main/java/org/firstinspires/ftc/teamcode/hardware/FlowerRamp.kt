@@ -13,7 +13,7 @@ class FlowerRamp(
     private lateinit var servoPair: ServoPair
 
     override fun init() {
-        servoPair = ServoPair(hardwareMap,servoName1,servoName2)
+        servoPair = ServoPair(hardwareMap,servoName1,servoName2).apply { init() }
     }
 
     fun down() {

@@ -33,9 +33,9 @@ object MathUtils {
     }
 
     fun wrap(
-        value: Int,
-        range: Pair<Int, Int>,
-    ): Int {
+        value: Double,
+        range: Pair<Double, Double>,
+    ): Double {
         val spread = range.second - range.first
         var normalized = value
         while (normalized > range.second) normalized -= spread

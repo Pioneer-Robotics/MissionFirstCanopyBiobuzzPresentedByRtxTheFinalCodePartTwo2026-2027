@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.biobuzz.Points
+import org.firstinspires.ftc.teamcode.helpers.MathUtils
 import org.firstinspires.ftc.teamcode.helpers.Pose
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -11,7 +12,7 @@ class Turret(
     private val hardwareMap: HardwareMap,
     private val servo1Name: String = Constants.HardwareNames.TURRET_SERVO_1,
     private val servo2Name: String = Constants.HardwareNames.TURRET_SERVO_2,
-    private val encoderName: String = Constants.HardwareNames.INTAKE
+    private val encoderName: String = Constants.HardwareNames.TRANSFER
 ) : HardwareComponent {
 
     private lateinit var servoPair: CRServoPair
@@ -30,25 +31,12 @@ class Turret(
         servoPair.update(dt)
     }
 
-    fun gotoPosition(position: Double) {
-        servoPair.setPosition(position)
-    }
-
     fun gotoAngle(angleDeg: Double) {
-        val modAngle = (angleDeg.mod(360.0)).coerceIn(minAngleDeg, maxAngleDeg)
-
-        // Convert to servo position 0 to 1
-        val pos = (modAngle - minAngleDeg) / (maxAngleDeg - minAngleDeg)
-
-        gotoPosition(pos)
-    }
-
-    fun getPosition(): Double {
-        return servoPair.position
+        servoPair.setAngle(MathUtils.wrap(angleDeg, Pair(minAngleDeg, maxAngleDeg)))
     }
 
     fun getAngle(): Double {
-        return minAngleDeg + getPosition() * (maxAngleDeg - minAngleDeg)
+        return servoPair.angle
     }
 
     fun aimAtPos(robotPose: Pose, goalPose: Pose) {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.CRServo
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -18,7 +19,7 @@ class CRServoPair(
     private val servo2Name: String,
     private val encoderName: String,
     private val reverseServo: Boolean = true,
-    private val encoderResolution: Int = 20234, // Counts per revolution
+    private val encoderResolution: Int = 20467, // Counts per revolution
     // TODO tune encoder resolution and pid
     private val pidConstants: Array<Double> = arrayOf(0.0001, 0.0, 0.0)
 ) : HardwareComponent {
@@ -29,13 +30,15 @@ class CRServoPair(
     private lateinit var encoder: DcMotorEx
     private var targetTicks = 0
 
-    val position: Double
-        get() = encoder.currentPosition / encoderResolution.toDouble()
+    val angle: Double
+        get() = (encoder.currentPosition / encoderResolution.toDouble()).mod(1.0) * 360
 
     override fun init() {
         servo1 = hardwareMap.get(CRServo::class.java, servo1Name)
         servo2 = hardwareMap.get(CRServo::class.java, servo2Name)
         encoder = hardwareMap.get(DcMotorEx::class.java, encoderName)
+
+        encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
         if (reverseServo) {
             servo1.direction = DcMotorSimple.Direction.REVERSE
@@ -49,8 +52,9 @@ class CRServoPair(
     /**
      * Set a target position to run to using PID from 0-1
      */
-    fun setPosition(position: Double) {
-        targetTicks = (position * encoderResolution).toInt()
+    fun setAngle(angle: Double) {
+        targetTicks = (angle * encoderResolution / 360).toInt()
+        targetTicks = (angle * encoderResolution / 360).toInt()
     }
 
     override fun update(dt: Double) {
