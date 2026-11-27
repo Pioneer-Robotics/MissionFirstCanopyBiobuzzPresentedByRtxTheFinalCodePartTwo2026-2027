@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.drivers
 
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Bot
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.general.AllianceColor
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.opmodes.teleop.Teleop
 import org.firstinspires.ftc.teamcode.opmodes.teleop.driverProfiles.ControlProfile
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -29,8 +31,7 @@ class TeleopDriver1(
     // Toggles
     private var incDrivePower: Toggle = Toggle(false)
     private var decDrivePower: Toggle = Toggle(false)
-    private var fieldCentricToggle: Toggle = Toggle(false)
-    private var intakeToggle: Toggle = Toggle(false)
+    private var fieldCentricToggle: Toggle = Toggle(true)
     private var flowerToggle: Toggle = Toggle(false)
 
     fun update() {
@@ -56,9 +57,9 @@ class TeleopDriver1(
         }
         bot.mecanumBase?.setDrivePower(
             Pose(
-                vx = direction.x,
-                vy = direction.y,
-                omega = controls.turn.toDouble(),
+                vx = if (abs(direction.x) < 0.05) 0.0 else direction.x,
+                vy = if (abs(direction.y) < 0.05) 0.0 else direction.y,
+                omega = if (abs(controls.turn.toDouble()) < 0.05) 0.0 else controls.turn.toDouble(),
             ),
             drivePower,
             Constants.Drive.MAX_MOTOR_VELOCITY_TPS
@@ -92,14 +93,13 @@ class TeleopDriver1(
         }
 
         //Auto stop intake
-        if (teleop.storageFull.justChanged) {
-            autoStopIntake = teleop.storageFull.state
+        autoStopIntake = bot.breakBeam?.state!!
+
+        if (controls.endAutoStopIntake) {
+            autoStopIntake = false
         }
         if (autoStopIntake) {
             intakeState = false
-            if (controls.endAutoStopIntake) {
-                autoStopIntake = false
-            }
         }
 
         //All reverse controls
@@ -116,14 +116,18 @@ class TeleopDriver1(
         }
 
         //Talk to intake hardware
-        var intakePow = if (reverseIntake) -1.0 else 1.0
-        intakePow *= if (intakeState) 1.0 else 0.0
+        var intakePow = 0.0
+        if (reverseIntake) {
+            intakePow = -1.0
+        } else if (intakeState) {
+            intakePow = 1.0
+        }
 
         bot.intake?.setPower(intakePow)
     }
 
     private fun handleResetOdo() {
-        if (controls.resetOdo1 > 0.5 && controls.resetOdo2 > 0.5) {
+        if (controls.resetOdo) {
             bot.pinpoint?.reset(Constants.Misc.RESET_POSE)
         }
     }

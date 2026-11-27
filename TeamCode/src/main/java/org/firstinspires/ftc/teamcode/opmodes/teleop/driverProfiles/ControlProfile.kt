@@ -18,8 +18,7 @@ interface ControlProfile {
     val reverseAll: Boolean
     val reverseIntake: Boolean
 
-    val resetOdo1: Float
-    val resetOdo2: Float
+    val resetOdo: Boolean
 
     val flowerRamp: Boolean
 

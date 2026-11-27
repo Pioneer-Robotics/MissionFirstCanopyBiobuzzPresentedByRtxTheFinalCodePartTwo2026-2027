@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.prism.Color
 import org.firstinspires.ftc.teamcode.helpers.Toggle
 import org.firstinspires.ftc.teamcode.helpers.next
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode
-import org.firstinspires.ftc.teamcode.opmodes.teleop.driverProfiles.ControlProfile1
+import org.firstinspires.ftc.teamcode.opmodes.teleop.driverProfiles.SoloControlProfile
 import org.firstinspires.ftc.teamcode.opmodes.teleop.drivers.TeleopDriver1
 import org.firstinspires.ftc.teamcode.opmodes.teleop.drivers.TeleopDriver2
 
@@ -19,12 +19,10 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     private val allianceToggle = Toggle(false)
     private var changedAllianceColor = false
 
-    private lateinit var controlProfile: ControlProfile1
-
-    var storageFull = Toggle(false)
+    private lateinit var controlProfile: SoloControlProfile
 
     override fun onInit() {
-        controlProfile = ControlProfile1(gamepad1, gamepad2)
+        controlProfile = SoloControlProfile(gamepad1, gamepad2)
         driver1 = TeleopDriver1(controlProfile, bot, this)
         driver2 = TeleopDriver2(controlProfile, bot, this)
     }
@@ -66,18 +64,12 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
     }
 
     private fun handleTransfer(){
-        var transferPow = 0.0
-
-        if (driver1.reverseTransfer) { // Highest Priority: Reverse if requested
-            transferPow = -Constants.Transfer.SHOOT_POWER
-        } else if (driver2.requestTransferOn) { // Next Priority: Shoot at high power
-            transferPow = Constants.Transfer.SHOOT_POWER
-        } else if (driver1.requestTransferOn and !bot.breakBeam?.state!!) { // Next Priority: Idle at lower power
-            transferPow = Constants.Transfer.LOAD_POWER
-        }
-
-        if (driver2.stopTransfer and !driver1.reverseTransfer) { // If opening servo to shoot, stop transfer
-            transferPow *= 0.0
+        val transferPow = when {
+            driver2.stopTransfer and !driver1.reverseTransfer -> 0.0
+            driver1.reverseTransfer -> -Constants.Transfer.SHOOT_POWER
+            driver2.requestTransferOn -> Constants.Transfer.SHOOT_POWER
+            driver1.requestTransferOn and (bot.breakBeam?.state == false) -> Constants.Transfer.LOAD_POWER
+            else -> 0.0
         }
 
         bot.transfer?.setPower(transferPow)
@@ -96,10 +88,6 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
         addTelemetryData("Pose", bot.pinpoint!!.pose, Verbose.DEBUG)
         addTelemetryData("Flywheel Velocity", bot.flywheel?.getVelocity(), Verbose.INFO)
         addTelemetryData("Flywheel On", driver2.flywheelOn.state, Verbose.INFO)
-        addTelemetryData("Driver 1 transfer", driver1.requestTransferOn, Verbose.INFO)
-        addTelemetryData("Driver 2 transfer", driver2.requestTransferOn, Verbose.INFO)
-        addTelemetryData("Driver 2 force stop transfer", driver2.stopTransfer, Verbose.INFO)
-        addTelemetryData("Driver 1 reverse transfer", driver1.reverseTransfer, Verbose.INFO)
         addTelemetryData("Breakbeam", bot.breakBeam?.state, Verbose.INFO)
         addTelemetryData("Turret angle", bot.turret?.getAngle(), Verbose.INFO)
         addTelemetryData("Turret change", controlProfile.incManTrack - controlProfile.decManTrack, Verbose.INFO)

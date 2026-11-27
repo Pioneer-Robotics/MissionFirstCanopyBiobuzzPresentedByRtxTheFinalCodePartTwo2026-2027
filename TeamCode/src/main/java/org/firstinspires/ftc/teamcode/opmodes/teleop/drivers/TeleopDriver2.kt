@@ -74,7 +74,7 @@ class TeleopDriver2(
                 manualTurretTarget = bot.turret?.getAngle() ?: 0.0
             }
             val change = controls.incManTrack - controls.decManTrack
-            manualTurretTarget += change * 10
+            manualTurretTarget += change * 3
             bot.turret?.gotoAngle(manualTurretTarget)
         }
     }

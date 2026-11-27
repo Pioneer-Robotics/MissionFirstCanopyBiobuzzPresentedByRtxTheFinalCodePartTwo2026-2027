@@ -20,8 +20,7 @@ class ControlProfile1(private val gamepad1: Gamepad, private val gamepad2: Gamep
     override val reverseAll get() = gamepad1.dpad_up
     override val reverseIntake get() = gamepad1.dpad_down
 
-    override val resetOdo1 get() = gamepad1.right_trigger
-    override val resetOdo2 get() = gamepad1.left_trigger
+    override val resetOdo get() = gamepad1.right_trigger > 0.5 && gamepad1.left_trigger > 0.5
 
     override val flowerRamp get() = gamepad1.cross
 
