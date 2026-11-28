@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.hardware.Camera
 import org.firstinspires.ftc.teamcode.hardware.DualFlywheel
 import org.firstinspires.ftc.teamcode.hardware.FlowerRamp
 import org.firstinspires.ftc.teamcode.hardware.HardwareComponent
+import org.firstinspires.ftc.teamcode.hardware.HubPower
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.LED
 import org.firstinspires.ftc.teamcode.hardware.MecanumBase
@@ -53,7 +54,6 @@ class Bot private constructor(
     val mecanumBase get() = get<MecanumBase>()
     val pinpoint get() = get<Pinpoint>()
     val camera get() = get<Camera>()
-    val batteryMonitor get() = get<BatteryMonitor>()
     val led get() = get<LED>()
 
     val turret get() = get<Turret>()
@@ -63,6 +63,9 @@ class Bot private constructor(
     val releaseServo get() = get<ReleaseServo>()
     val flowerRamp get() = get<FlowerRamp>()
     val breakBeam get() = get<BreakBeamPair>()
+
+    val batteryMonitor get() = get<BatteryMonitor>()
+    val hubPower get() = get<HubPower>()
 
     // Follower is lazily initialized (only if accessed)
     // and will error if localizer or mecanumBase is missing
@@ -127,6 +130,7 @@ class Bot private constructor(
                         .add(ReleaseServo(hardwareMap))
                         .add(FlowerRamp(hardwareMap))
                         .add(BreakBeamPair(hardwareMap))
+                        .add(HubPower(hardwareMap))
                         .build()
                 BotType.CUSTOM -> throw IllegalArgumentException("Use Bot.builder() to create a custom bot")
             }

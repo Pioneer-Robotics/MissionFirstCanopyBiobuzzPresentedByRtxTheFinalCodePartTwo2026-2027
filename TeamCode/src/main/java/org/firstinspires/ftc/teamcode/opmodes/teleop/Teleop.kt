@@ -95,5 +95,8 @@ class Teleop : BaseOpMode(BotType.COMP_BOT) {
         addTelemetryData("Field Centric", driver1.fieldCentric, Verbose.INFO)
         addTelemetryData("Velocity", "vx: %.2f, vy: %.2f".format(bot.pinpoint?.pose?.vx, bot.pinpoint?.pose?.vy), Verbose.DEBUG)
         addTelemetryData("Voltage", bot.batteryMonitor?.voltage, Verbose.INFO)
+        addTelemetryData("Current Draw (mA)", bot.hubPower?.getCurrentDraw(), Verbose.INFO)
+        addTelemetryData("Charged Used (mAh)", bot.hubPower?.getChargeUsed(), Verbose.INFO)
+        addTelemetryData("Average Current Draw (mA)", bot.hubPower?.getAverageCurrent(), Verbose.DEBUG)
     }
 }
